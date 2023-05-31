@@ -1,20 +1,20 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import Navigation from './Navigation';
+import { NativeWindStyleSheet } from 'nativewind';
+import Appcontext from './Appcontext';
+import Alert from './components/Alert';
+
+NativeWindStyleSheet.setOutput({
+  default: "native",
+});
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Appcontext>
+        <StatusBar style="auto" />
+        {/* <Alert /> */}
+        <Navigation />
+    </Appcontext>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

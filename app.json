@@ -21,10 +21,18 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.arunpatel.copyinst",
+      "permissions": [""]
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "1c57ad50-29b9-4773-9881-8211f35bbbe9"
+      }
+    },
+    "plugins": ["@react-native-google-signin/google-signin"]
   }
 }
