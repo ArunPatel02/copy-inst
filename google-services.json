@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "468150064386",
+    "project_id": "lateral-medium-388310",
+    "storage_bucket": "lateral-medium-388310.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:468150064386:android:2422092df72368305ade1b",
+        "android_client_info": {
+          "package_name": "com.arunpatel.copyinst"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "468150064386-4hq112vv05mcqjh7gvkt4oikvq8krpfv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.arunpatel.copyinst",
+            "certificate_hash": "bc4ef0b03d10db6f2eaf9dce4667436a7a8d4419"
+          }
+        },
+        {
+          "client_id": "468150064386-flrvupg5jusj8qf3oedoljo9r0fotb74.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGx-SURVqVRkj1WH4AYFEsO9JfILgyJNQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "468150064386-flrvupg5jusj8qf3oedoljo9r0fotb74.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

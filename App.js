@@ -12,9 +12,9 @@ NativeWindStyleSheet.setOutput({
 export default function App() {
   return (
     <Appcontext>
-        <StatusBar style="auto" />
-        {/* <Alert /> */}
-        <Navigation />
+      <StatusBar style="auto" />
+      {/* <Alert /> */}
+      <Navigation />
     </Appcontext>
   );
 }

@@ -23,7 +23,8 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.arunpatel.copyinst",
-      "permissions": [""]
+      "permissions": ["WRITE_EXTERNAL_STORAGE"],
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -33,6 +34,5 @@
         "projectId": "1c57ad50-29b9-4773-9881-8211f35bbbe9"
       }
     },
-    "plugins": ["@react-native-google-signin/google-signin"]
   }
 }

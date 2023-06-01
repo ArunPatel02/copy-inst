@@ -31,6 +31,7 @@ import CreateHashtags from "./screens/CreateHashtags";
 import LockSetting from "./screens/LockSetting";
 import BackUp from "./screens/BackUp";
 import BackUpDummy from "./screens/dummy";
+// import BackUpDummy from "./screens/dummy";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
