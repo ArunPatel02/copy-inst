@@ -8,8 +8,21 @@ import { useNavigation } from "@react-navigation/native";
 const ListItem = ({ icon, label, onPress }) => {
   return (
     <TouchableOpacity activeOpacity={0.5} onPress={() => onPress()}>
-      <View className="bg-white p-4 py-3 flex flex-row items-center justify-between mt-[1px]">
-        <Text className="text-[17px]">{label}</Text>
+      <View
+        // className="bg-white p-4 py-3 flex flex-row items-center justify-between mt-[1px]"
+        style={{
+          backgroundColor: "white",
+          padding: 16,
+          paddingVertical: 12,
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginTop: 1,
+        }}
+      >
+        <Text className="text-[17px]" style={{ fontSize: 17 }}>
+          {label}
+        </Text>
         {icon}
       </View>
     </TouchableOpacity>
@@ -21,8 +34,13 @@ const UserPage = () => {
   return (
     <ScrollView>
       <Text
-        className="text-base font-semibold ml-4 my-4"
-        style={{ color: "#b0b0b0" }}
+        style={{
+          color: "#b0b0b0",
+          fontSize: 16,
+          fontWeight: "600",
+          marginLeft: 16,
+          marginVertical: 16,
+        }}
       >
         Data Protection
       </Text>
@@ -37,8 +55,13 @@ const UserPage = () => {
         icon={<FontAwesome name="lock" size={28} color="#b0b0b0" />}
       />
       <Text
-        className="text-base font-semibold ml-4 my-4"
-        style={{ color: "#b0b0b0" }}
+        style={{
+          color: "#b0b0b0",
+          fontSize: 16,
+          fontWeight: "600",
+          marginLeft: 16,
+          marginVertical: 16,
+        }}
       >
         Love it!
       </Text>
@@ -55,8 +78,13 @@ const UserPage = () => {
         icon={<FontAwesome name="star-o" size={28} color="#b0b0b0" />}
       />
       <Text
-        className="text-base font-semibold ml-4 my-4"
-        style={{ color: "#b0b0b0" }}
+        style={{
+          color: "#b0b0b0",
+          fontSize: 16,
+          fontWeight: "600",
+          marginLeft: 16,
+          marginVertical: 16,
+        }}
       >
         Application Info
       </Text>

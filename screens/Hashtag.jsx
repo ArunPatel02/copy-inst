@@ -20,6 +20,7 @@ import BottomListExtractPost from "../components/BottomListExtractPost";
 import { SwipeListView } from "react-native-swipe-list-view";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
+import moment from "moment";
 
 const Hashtag = () => {
   const {
@@ -32,6 +33,12 @@ const Hashtag = () => {
   const navigation = useNavigation();
 
   const Listitem = ({ item, idx }) => {
+    // const [timeAgeStr, settimeAgeStr] = useState("");
+    // useEffect(() => {
+    //   setInterval(() => {
+    //     settimeAgeStr(moment.utc(time).local().startOf("seconds").fromNow())
+    //   }, 1000);
+    // }, []);
     // console.log(item, idx);
     return (
       <>
@@ -94,7 +101,7 @@ const Hashtag = () => {
                     color: "#808080bd",
                   }}
                 >
-                  22hr ago.
+                  {moment.utc(item.Date).local().startOf("seconds").fromNow()}
                 </Text>
               </View>
             </View>
@@ -118,7 +125,7 @@ const Hashtag = () => {
     // console.log(route.params);
     let tagsArray = [...hashtagGroup];
     if (tagsArray[index]) {
-      tagsArray.splice(index, 0, tagsArray[index]);
+      tagsArray.splice(index, 0, { ...tagsArray[index], Date: new Date() });
     }
     sethashtagGroup(tagsArray);
     updateAsyncStorage("hashTagsGroups", tagsArray);
@@ -162,7 +169,7 @@ const Hashtag = () => {
                 >
                   {/* <TouchableOpacity> */}
                   <TouchableOpacity
-                  onPress={() => duplicateItem(data.index)}
+                    onPress={() => duplicateItem(data.index)}
                     activeOpacity={0.7}
                     style={{
                       backgroundColor: "blue",

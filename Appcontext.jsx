@@ -9,8 +9,12 @@ const Appcontext = ({ children }) => {
   const [postList, setpostList] = useState([]);
   const [visible, setvisible] = useState({
     show: false,
+    topHeading: "",
     heading: "",
     text: "",
+    button: "",
+    extaText: "",
+    callback: null,
   });
   const [fontSearch, setfontSearch] = useState("");
   const [isUpdating, setisUpdating] = useState({ state: false, index: null });
@@ -32,6 +36,9 @@ const Appcontext = ({ children }) => {
   const [showhastagBottomModal, setshowhastagBottomModal] = useState(false);
   const [showhastagBottomModal2, setshowhastagBottomModal2] = useState(false);
   const [showhastagBottomModal3, setshowhastagBottomModal3] = useState(false);
+  const [showhastagBottomModal4, setshowhastagBottomModal4] = useState(false);
+  const [showhastagBottomModal5, setshowhastagBottomModal5] = useState(false);
+  const [showhastagBottomModal6, setshowhastagBottomModal6] = useState(false);
 
   const [hashtagGroup, sethashtagGroup] = useState([]);
 
@@ -63,6 +70,7 @@ const Appcontext = ({ children }) => {
       sethashtagGroup([...JSON.parse(res)]);
     });
   }, []);
+  const [backUpfiles, setbackUpfiles] = useState([]);
 
   return (
     <CustomContext.Provider
@@ -96,6 +104,14 @@ const Appcontext = ({ children }) => {
         postLength,
         showhastagBottomModal3,
         setshowhastagBottomModal3,
+        showhastagBottomModal4,
+        setshowhastagBottomModal4,
+        showhastagBottomModal5,
+        setshowhastagBottomModal5,
+        showhastagBottomModal6,
+        setshowhastagBottomModal6,
+        backUpfiles,
+        setbackUpfiles,
       }}
     >
       {children}

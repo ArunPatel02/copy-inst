@@ -61,10 +61,12 @@ const CreateHashtags = () => {
             let tagsArray = [...hashtagGroup];
             if (tagsArray[currentHashtagGroupIndex]) {
               tagsArray[currentHashtagGroupIndex].groupName = value;
+              tagsArray[currentHashtagGroupIndex].Date = new Date();
             } else {
               tagsArray[currentHashtagGroupIndex] = {
                 groupName: value,
                 hashtags: [],
+                Date: new Date(),
               };
             }
             updateAsyncStorage("hashTagsGroups", tagsArray);
@@ -91,6 +93,7 @@ const CreateHashtags = () => {
                             index,
                             1
                           );
+                          tagsArray[currentHashtagGroupIndex].Date = new Date();
                           sethashtagGroup(tagsArray);
                           updateAsyncStorage("hashTagsGroups", tagsArray);
                         }}
@@ -134,7 +137,8 @@ const CreateHashtags = () => {
           label="Copy Hashtags"
           size={"98%"}
           onPress={() => {
-            let coppyText = hashtagGroup[currentHashtagGroupIndex].hashtags.join(' ')
+            let coppyText =
+              hashtagGroup[currentHashtagGroupIndex].hashtags.join(" ");
             Clipboard.setStringAsync(coppyText);
           }}
         />

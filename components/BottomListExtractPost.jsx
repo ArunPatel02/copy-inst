@@ -77,6 +77,7 @@ const BottomListExtractPost = ({ navigation }) => {
               tagsArray[hashtagGroup.length] = {
                 groupName: "",
                 hashtags: [...hashtagArray],
+                Date: new Date(),
               };
               updateAsyncStorage("hashTagsGroups", tagsArray);
               navigation.navigate("createHashtag", {

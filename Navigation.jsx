@@ -225,6 +225,7 @@ const Home = (props) => {
         name="Posts"
         component={Post}
         options={({ navigation, route }) => ({
+          unmountOnBlur: true,
           headerTitle: (props) => (
             <Text className="text-xl font-semibold">Posts</Text>
           ),
@@ -247,6 +248,7 @@ const Home = (props) => {
         name="Hastags"
         component={Hashtag}
         options={({ navigation, route }) => ({
+          unmountOnBlur: true,
           headerTitle: (props) => (
             <Text className="text-xl font-semibold">Hastags Group</Text>
           ),
@@ -269,6 +271,7 @@ const Home = (props) => {
         name="Profile"
         component={UserPage}
         options={({ navigation, route }) => ({
+          unmountOnBlur: true,
           headerTitle: (props) => (
             <Text className="text-xl font-semibold">User Page</Text>
           ),
@@ -300,6 +303,9 @@ const Navigation = () => {
     createPostInput,
     postLength,
     totalHastagCount,
+    showhastagBottomModal4,
+    showhastagBottomModal5,
+    showhastagBottomModal6,
   } = useContext(CustomContext);
 
   return (
@@ -307,7 +313,10 @@ const Navigation = () => {
       <Alert visible={visible} setvisible={setvisible} />
       {showhastagBottomModal ||
       showhastagBottomModal2 ||
-      showhastagBottomModal3 ? (
+      showhastagBottomModal3 ||
+      showhastagBottomModal4 ||
+      showhastagBottomModal5 ||
+      showhastagBottomModal6 ? (
         <View
           style={{
             // backgroundColor: "#b3b3b370",
@@ -471,8 +480,8 @@ const Navigation = () => {
           />
           <Stack.Screen
             name="passwordSetting"
-            // component={LockSetting}
-            component={BackUpDummy}
+            component={LockSetting}
+            // component={BackUpDummy}
             options={({ navigation, route }) => ({
               headerTitle: (props) => (
                 <Text className="text-xl font-semibold">Lock Setting</Text>

@@ -99,11 +99,17 @@ const CreatePost = () => {
               className="flex-grow flex flex-row justify-center items-center rounded-lg bg-white py-2"
               style={styles.boxShadow}
               onPress={() => {
-                console.log(hashtagGroup.length)
+                console.log(hashtagGroup.length);
                 if (hashtagGroup.length) {
                   setshowhastagBottomModal3(true);
                 } else {
-                  setvisible((pre) => ({ ...pre, show: true }));
+                  setvisible((pre) => ({
+                    ...pre,
+                    topHeading: " Select a hashtag group",
+                    text: "Please use it after registering more than one hashtag groups",
+                    heading: "No hashtag groups.",
+                    show: true,
+                  }));
                 }
               }}
             >

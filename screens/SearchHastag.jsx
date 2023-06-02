@@ -67,6 +67,7 @@ const SearchHastag = () => {
                   tagsArray[currentHashtagGroupIndex] = {
                     groupName: "",
                     hashtags: [`#${hasStr}`],
+                    Date: new Date(),
                   };
                 }
                 sethashtagGroup(tagsArray);

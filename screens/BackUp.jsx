@@ -5,16 +5,24 @@ import {
   StyleSheet,
   Text,
   View,
+  ScrollView,
+  FlatList,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import GoogleLogo from "../assets/google.png";
 import BackupImage from "../assets/backup.png";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
+import AuthSession from "expo-auth-session";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import GDrive from "expo-google-drive-api-wrapper";
 import moment from "moment";
+import BottomBackupList from "../components/BottomBackupList";
+import { CustomContext } from "../Appcontext";
+import BottomListChangeName from "../components/BottomListChangeName";
+import BottomListDeleteBackup from "../components/BottomListDeleteBackup";
+import { useNavigation } from "@react-navigation/native";
 
 //andriod : 468150064386-4hq112vv05mcqjh7gvkt4oikvq8krpfv.apps.googleusercontent.com
 //clent web : 468150064386-flrvupg5jusj8qf3oedoljo9r0fotb74.apps.googleusercontent.com
@@ -33,16 +41,26 @@ const BackUp = () => {
     scopes: ["https://www.googleapis.com/auth/drive"],
   });
 
+  const {
+    showhastagBottomModal4,
+    setshowhastagBottomModal4,
+    backUpfiles,
+    setbackUpfiles,
+  } = useContext(CustomContext);
+
   const [token, setToken] = useState("");
   const [userInfo, setUserInfo] = useState({});
   const [storage, setstorage] = useState({});
   const [loading, setloading] = useState(false);
-  const [backUpfiles, setbackUpfiles] = useState([]);
   const [folder, setfolder] = useState("");
+  const [isLoginOut, setisLoginOut] = useState(false);
+  const [clickedBackupId, setclickedBackupId] = useState("");
+
+  const navigation = useNavigation()
 
   const getFileDetails = async (id, savedToken) => {
     try {
-      console.log("start file fetching");
+      // console.log("start file fetching");
       const fileData = await fetch(
         `https://www.googleapis.com/drive/v3/files/${id}?fields=id,name,size,modifiedTime`,
         {
@@ -50,17 +68,34 @@ const BackUp = () => {
         }
       );
       const fileDataParse = await fileData.json();
-      console.log("this is file details", fileDataParse);
+      // console.log("this is file details", fileDataParse);
       setbackUpfiles((pre) => [fileDataParse, ...pre]);
     } catch (error) {
-      console.log(error, "error while fetching the file");
+      // console.log(error, "error while fetching the file");
+    }
+  };
+
+  const getFileContent = async (id, savedToken) => {
+    try {
+      // console.log("start file fetching");
+      const fileData = await fetch(
+        `https://www.googleapis.com/drive/v3/files/${id}?alt=media&fields=*`,
+        {
+          headers: { Authorization: `Bearer ${savedToken}` },
+        }
+      );
+      const fileDataParse = await fileData.json();
+      // console.log("this is file details", fileDataParse);
+      // setbackUpfiles((pre) => [fileDataParse, ...pre]);
+    } catch (error) {
+      // console.log(error, "error while fetching the file");
     }
   };
 
   const getFileList = async (folder, savedToken) => {
     // https://www.googleapis.com/drive/v3/files?q=%27arun%27&fields=*
     try {
-      console.log("start file fetching");
+      // console.log("start file fetching");
       const fileData = await fetch(
         `https://www.googleapis.com/drive/v3/files?q=%27${folder}%27%20in%20parents&fields=*`,
         {
@@ -71,10 +106,10 @@ const BackUp = () => {
       const data = fileDataParse.files.map(
         ({ id, name, size, modifiedTime }) => ({ id, name, size, modifiedTime })
       );
-      console.log("this is filelist details", data);
+      // console.log("this is filelist details", data);
       setbackUpfiles(data);
     } catch (error) {
-      console.log(error, "error while fetching the file");
+      // console.log(error, "error while fetching the file");
     }
   };
 
@@ -82,28 +117,28 @@ const BackUp = () => {
     GDrive.setAccessToken(token);
     GDrive.init();
     // const aboutData = await GDrive.about;
-    // console.log("this is about data", aboutData);
+    // // console.log("this is about data", aboutData);
   };
 
   useEffect(() => {
-    setloading(true);
+    // console.log("fetching the token started");
     AsyncStorage.getItem("token").then((tokenSaved) => {
-      console.log("token fetch from storage", tokenSaved);
+      // console.log("token fetch from storage", tokenSaved);
       if (JSON.parse(tokenSaved)) {
+        setloading(true);
         setToken(JSON.parse(tokenSaved));
-        gdInit(JSON.parse(tokenSaved));
-        getUserInfo(JSON.parse(tokenSaved));
+      } else {
+        setloading(false);
+        // console.log("token is not present");
       }
     });
   }, []);
 
   useEffect(() => {
-    if (
-      response?.type === "success" &&
-      !userInfo &&
-      Object.keys(userInfo).length === 0
-    ) {
-      console.log("token", response.authentication.accessToken);
+    // console.log("started seting the data", response);
+    if (isLoginOut) return;
+    if (response?.type === "success") {
+      // console.log("token", response.authentication.accessToken);
       setToken(response.authentication.accessToken);
       gdInit(response.authentication.accessToken);
       getUserInfo(response.authentication.accessToken);
@@ -111,8 +146,12 @@ const BackUp = () => {
         "token",
         JSON.stringify(response.authentication.accessToken)
       ).then(() => {
-        console.log("token saved");
+        // console.log("token saved");
       });
+    }
+    if (!response && token) {
+      gdInit(token);
+      getUserInfo(token);
     }
   }, [response, token]);
 
@@ -132,7 +171,7 @@ const BackUp = () => {
 
   const getUserInfo = async (savedToken) => {
     if (!savedToken) return;
-    console.log(savedToken, "start fetching");
+    // console.log(savedToken, "start fetching");
     try {
       const response = await fetch(
         "https://www.googleapis.com/userinfo/v2/me",
@@ -150,22 +189,22 @@ const BackUp = () => {
         }
       );
       const restStorage = await FetchSrorage.json();
-      console.log("this is user", user, restStorage);
+      // console.log("this is user", user, restStorage);
       if (user && restStorage) {
         setstorage(restStorage.storageQuota);
         setUserInfo(user);
-        setloading(false);
       }
       const createFolder = await GDrive.files.safeCreateFolder({
         name: "copyInst",
         parents: ["root"],
       });
       // const folderParse = await folder.json();
-      console.log(createFolder, "folder");
+      // console.log(createFolder, "folder");
       getFileList(createFolder, savedToken);
       setfolder(createFolder);
+      setloading(false);
     } catch (error) {
-      console.log(error, "this is error");
+      // console.log(error, "this is error");
       setloading(false);
       // Add your own error handler here
     }
@@ -188,7 +227,10 @@ const BackUp = () => {
         storage &&
         Object.keys(userInfo).length &&
         Object.keys(storage).length ? (
-        <View>
+        <ScrollView>
+          <BottomBackupList id={clickedBackupId} token={token} navigation={navigation} />
+          <BottomListChangeName id={clickedBackupId} token={token} />
+          <BottomListDeleteBackup id={clickedBackupId} token={token} />
           <View
             style={{
               paddingHorizontal: 20,
@@ -202,17 +244,36 @@ const BackUp = () => {
               <Text style={{ fontSize: 17, fontWeight: "500", color: "gray" }}>
                 {userInfo.email}
               </Text>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: "300",
-                  marginTop: 2,
-                  textDecorationLine: "underline",
-                  color: "gray",
+              <Pressable
+                onPress={async () => {
+                  // console.log("login out");
+                  setisLoginOut(true);
+                  if (token) {
+                    try {
+                      await AsyncStorage.removeItem("token");
+                      // setisLoginOut(false);
+                    } catch (error) {
+                      // console.log("ERROR XXX", error);
+                    }
+                  }
+                  setUserInfo({});
+                  setstorage({});
+                  setbackUpfiles([]);
+                  setToken("");
                 }}
               >
-                Log out
-              </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "300",
+                    marginTop: 2,
+                    textDecorationLine: "underline",
+                    color: "gray",
+                  }}
+                >
+                  Log out
+                </Text>
+              </Pressable>
             </View>
             <View
               style={{
@@ -251,7 +312,9 @@ const BackUp = () => {
           >
             <View
               style={{
-                width: `${parseInt((storage?.usage * 100) / storage?.limit)}%`,
+                width: `${((storage?.usage * 100) / storage?.limit).toFixed(
+                  1
+                )}%`,
                 backgroundColor: "blue",
                 height: 10,
                 borderRadius: 10,
@@ -282,22 +345,23 @@ const BackUp = () => {
               marginHorizontal: "5%",
               borderRadius: 10,
               marginTop: 40,
+              marginBottom: 20,
             }}
             onPress={async () => {
               let jsonData = {};
               const allKeys = await AsyncStorage.getAllKeys();
-              console.log("allkeys", allKeys);
+              // console.log("allkeys", allKeys);
               Promise.all(
                 allKeys.map(async (key) => {
                   if (key !== "token") {
                     const data = await AsyncStorage.getItem(key);
-                    console.log(data);
+                    // console.log(data);
                     jsonData[key] = JSON.parse(data);
                   }
                 })
               ).then(async (_) => {
                 try {
-                  console.log(jsonData);
+                  // console.log(jsonData);
                   const data = await GDrive.files.createFileMultipart(
                     JSON.stringify(jsonData),
                     "application/json",
@@ -308,12 +372,12 @@ const BackUp = () => {
                     }
                   );
                   const dataParse = await data.json();
-                  console.log("this is file saved", dataParse);
+                  // console.log("this is file saved", dataParse);
                   getFileDetails(dataParse.id, token);
                   // const getFile = await GDrive.files.get(dataParse.id);
                   // const parsegetFile = await getFile.json();
                 } catch (error) {
-                  console.log("error", error);
+                  // console.log("error", error);
                 }
               });
             }}
@@ -351,20 +415,31 @@ const BackUp = () => {
             </View>
             {/* </ImageBackground> */}
           </Pressable>
-
           {backUpfiles.length
             ? backUpfiles.map((_, index) => (
                 <Pressable
+                  android_ripple={{
+                    color: "#0000080",
+                    borderless: false,
+                    radius: 165,
+                  }}
                   style={{
-                    marginTop: 20,
                     width: "90%",
                     backgroundColor: "white",
                     marginHorizontal: "5%",
                     paddingVertical: 15,
                     paddingHorizontal: 15,
                     borderRadius: 8,
+                    marginBottom: 20,
+                    overflow: "hidden",
                   }}
                   elevation={10}
+                  key={index.toString()}
+                  onPress={async () => {
+                    // getFileContent(_.id, token);
+                    setshowhastagBottomModal4(true);
+                    setclickedBackupId(_.id);
+                  }}
                 >
                   <View>
                     <Text
@@ -410,7 +485,7 @@ const BackUp = () => {
                 </Pressable>
               ))
             : null}
-        </View>
+        </ScrollView>
       ) : (
         <View>
           <Image
@@ -454,6 +529,8 @@ const BackUp = () => {
                 presentationStyle:
                   WebBrowser.WebBrowserPresentationStyle.POPOVER,
               });
+              setisLoginOut(false);
+              setloading(true);
             }}
           >
             <View style={{ flexDirection: "row", alignItems: "center" }}>
