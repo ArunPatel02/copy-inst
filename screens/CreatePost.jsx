@@ -143,6 +143,7 @@ const CreatePost = () => {
                 allposts[isUpdating.index] = {
                   postText: `${createPostInput}`,
                   Date: new Date(),
+                  createdDate: postList[isUpdating.index].createdDate,
                 };
               } else {
                 allposts = [
@@ -150,6 +151,7 @@ const CreatePost = () => {
                   {
                     postText: `${createPostInput}`,
                     Date: new Date(),
+                    createdDate: new Date(),
                   },
                 ];
                 setisUpdating({ state: true, index: isUpdating.index });

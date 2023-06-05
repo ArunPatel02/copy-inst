@@ -1,11 +1,17 @@
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Linking,
+} from "react-native";
 import React from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { styled, withExpoSnack } from "nativewind";
 import { useNavigation } from "@react-navigation/native";
 
-const ListItem = ({ icon, label, onPress }) => {
+const ListItem = ({ icon, label, onPress = () => {} }) => {
   return (
     <TouchableOpacity activeOpacity={0.5} onPress={() => onPress()}>
       <View
@@ -68,14 +74,29 @@ const UserPage = () => {
       <ListItem
         label={"Share this app"}
         icon={<FontAwesome name="thumbs-o-up" size={28} color="#b0b0b0" />}
+        onPress={() => {
+          Linking.openURL(
+            "https://play.google.com/store/apps/details?id=net.tonysoft.inst_enter"
+          );
+        }}
       />
       <ListItem
         label={"copy-inst Instagram"}
         icon={<FontAwesome name="instagram" size={28} color="#b0b0b0" />}
+        onPress={() => {
+          Linking.openURL(
+            "https://play.google.com/store/apps/details?id=net.tonysoft.inst_enter"
+          );
+        }}
       />
       <ListItem
         label={"Rate & Review"}
         icon={<FontAwesome name="star-o" size={28} color="#b0b0b0" />}
+        onPress={() => {
+          Linking.openURL(
+            "https://play.google.com/store/apps/details?id=net.tonysoft.inst_enter"
+          );
+        }}
       />
       <Text
         style={{
@@ -91,14 +112,17 @@ const UserPage = () => {
       <ListItem
         label={"How to use"}
         icon={<FontAwesome name="angle-right" size={28} color="#b0b0b0" />}
+        onPress={() => navigation.navigate("howToUse")}
       />
       <ListItem
         label={"Terms of use"}
         icon={<FontAwesome name="angle-right" size={28} color="#b0b0b0" />}
+        onPress={() => navigation.navigate("tarmOfUse")}
       />
       <ListItem
         label={"Privacy policy"}
         icon={<FontAwesome name="angle-right" size={28} color="#b0b0b0" />}
+        onPress={() => navigation.navigate("privacyPolicy")}
       />
       <ListItem
         label={"Version"}
@@ -107,6 +131,7 @@ const UserPage = () => {
             1.0.0
           </Text>
         }
+        onPress={() => {}}
       />
       {/* <View className="h-28"></View> */}
     </ScrollView>

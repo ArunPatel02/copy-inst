@@ -1,35 +1,69 @@
 import {
   Animated,
+  Pressable,
   SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
+  Vibration,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { CustomContext } from "../Appcontext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 // import PINCode from "@haskkor/react-native-pincode";
 
 const LockSetting = () => {
   const [currentpostion] = useState(new Animated.Value(0));
-  const [lockactive, setlockactive] = useState(false);
+  const {
+    lockactive,
+    setlockactive,
+    lockFirstTime,
+    setlockFirstTime,
+    lockPin,
+  } = useContext(CustomContext);
+  const navigation = useNavigation();
   const translateValue = 95 - 35 - 12;
-  const radioButtonClick = () => {
+  const radioButtonClick = async () => {
     if (!lockactive) {
       Animated.timing(currentpostion, {
         toValue: translateValue,
         useNativeDriver: true,
         duration: 300,
       }).start();
+      if (lockFirstTime) {
+        navigation.navigate("setPassword");
+      }
+      console.log("this is called");
+      await AsyncStorage.setItem(
+        "password",
+        JSON.stringify({ pin: lockPin, isPassword: true })
+      );
     } else {
       Animated.timing(currentpostion, {
         toValue: 0,
         useNativeDriver: true,
         duration: 300,
       }).start();
+      await AsyncStorage.setItem(
+        "password",
+        JSON.stringify({ pin: lockPin, isPassword: false })
+      );
     }
     setlockactive((pre) => !pre);
   };
+
+  useEffect(() => {
+    if (lockactive) {
+      Animated.timing(currentpostion, {
+        toValue: translateValue,
+        useNativeDriver: true,
+        duration: 300,
+      }).start();
+    }
+  }, []);
 
   console.log("current", currentpostion);
 
@@ -41,7 +75,10 @@ const LockSetting = () => {
         </View>
         <TouchableOpacity
           activeOpacity={1}
-          style={styles.radioButton}
+          style={[
+            styles.radioButton,
+            lockactive ? { backgroundColor: "#393ec5" } : {},
+          ]}
           onPress={() => radioButtonClick()}
         >
           <Animated.View
@@ -50,22 +87,28 @@ const LockSetting = () => {
               {
                 transform: [{ translateX: currentpostion }],
               },
+              lockactive ? { backgroundColor: "white" } : {},
             ]}
           >
             {!lockactive ? (
-              <FontAwesome5 name="unlock" size={20} color="gray" />
+              <FontAwesome5 name="unlock" size={18} color="gray" />
             ) : (
-              <FontAwesome5 name="lock" size={20} color="gray" />
+              <FontAwesome5 name="lock" size={18} color="#393ec5" />
             )}
           </Animated.View>
         </TouchableOpacity>
       </View>
       {lockactive ? (
-        <View style={styles.flexContainer}>
-          <View>
+        <Pressable
+          android_ripple={{ color: "#63606069" }}
+          onPress={() => {
+            navigation.navigate("setPassword");
+          }}
+        >
+          <View style={styles.flexContainer}>
             <Text style={styles.textItem}>Change Password</Text>
           </View>
-        </View>
+        </Pressable>
       ) : null}
       {/* <PINCode status={'choose'} storePin="1234" /> */}
     </SafeAreaView>

@@ -7,39 +7,18 @@ import {
 } from "react-native";
 import React, { useContext } from "react";
 import { CustomContext } from "../Appcontext";
-import { Feather } from "@expo/vector-icons";
-import { FontAwesome5 } from "@expo/vector-icons";
 
-const BottomList = ({
-  showhastagBottomModal,
-  setshowhastagBottomModal,
-  navigation,
-}) => {
-  const { showhastagBottomModal2, setshowhastagBottomModal2 } =
+const BottomListPost = ({ navigation, sortList, typeOfDate }) => {
+  const { showhastagBottomModal7, setshowhastagBottomModal7 } =
     useContext(CustomContext);
   return (
     <>
-      {/* {showhastagBottomModal ? (
-        <View
-          style={{
-            // backgroundColor: "#b3b3b370",
-            backgroundColor: "black",
-            opacity: 0.5,
-            position: "absolute",
-            top: 0,
-            right: 0,
-            left: 0,
-            bottom: 0,
-            zIndex: 10000,
-          }}
-        ></View>
-      ) : null} */}
       <Modal
-        visible={showhastagBottomModal}
+        visible={showhastagBottomModal7}
         animationType="slide"
         transparent={true}
         onRequestClose={() => {
-          setshowhastagBottomModal(false);
+          setshowhastagBottomModal7(false);
         }}
       >
         <TouchableOpacity
@@ -48,28 +27,15 @@ const BottomList = ({
               justifyContent: "flex-end",
               alignItems: "center",
               flex: 1,
-              // backgroundColor: "#00000080",
             },
           ]}
           activeOpacity={1}
-          onPress={() => setshowhastagBottomModal(false)}
+          onPress={() => setshowhastagBottomModal7(false)}
         >
-          {/* <View
-            tint="dark"
-            intensity={60}
-            style={[
-              {
-                justifyContent: "flex-end",
-                alignItems: "center",
-                flex: 1,
-                backgroundColor: "#00000080",
-              },
-            ]}
-          > */}
           <View
             style={{
               backgroundColor: "white",
-              paddingHorizontal: 15,
+            //   paddingHorizontal: 15,
               //   paddingBottom: 30,
               overflow: "hidden",
               //   borderRadius: 30,
@@ -95,8 +61,8 @@ const BottomList = ({
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback
               onPress={() => {
-                setshowhastagBottomModal(false);
-                navigation.navigate("createHashtag");
+                sortList(2)
+                setshowhastagBottomModal7(false);
               }}
             >
               <View
@@ -104,16 +70,12 @@ const BottomList = ({
                   flexDirection: "row",
                   alignItems: "center",
                   width: "100%",
-                  borderBottomColor: "#00000061",
-                  borderBottomWidth: 0.2,
+                //   borderBottomColor: "#00000061",
+                //   borderBottomWidth: 0.2,
+                  justifyContent: "center",
+                  backgroundColor : typeOfDate !== 1 ? "#393ec52b" : "white",
                 }}
               >
-                <FontAwesome5
-                  name="edit"
-                  size={24}
-                  color="#4f4f4f"
-                  style={{ marginRight: 10 }}
-                />
                 <Text
                   style={{
                     fontSize: 18,
@@ -121,14 +83,14 @@ const BottomList = ({
                     paddingVertical: 18,
                   }}
                 >
-                  Input Yourself
+                  Sort by creation time
                 </Text>
               </View>
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback
               onPress={() => {
-                setshowhastagBottomModal(false);
-                setshowhastagBottomModal2(true);
+                sortList(1)
+                setshowhastagBottomModal7(false);
               }}
             >
               <View
@@ -138,14 +100,10 @@ const BottomList = ({
                   width: "100%",
                   borderBottomColor: "#00000061",
                   borderBottomWidth: 0.2,
+                  justifyContent: "center",
+                  backgroundColor : typeOfDate === 1 ? "#393ec52b" : "white",
                 }}
               >
-                <Feather
-                  name="menu"
-                  size={26}
-                  color="#4f4f4f"
-                  style={{ marginRight: 10 }}
-                />
                 <Text
                   style={{
                     fontSize: 18,
@@ -153,7 +111,7 @@ const BottomList = ({
                     paddingVertical: 18,
                   }}
                 >
-                  Extract from posts
+                  Sort by updated time
                 </Text>
               </View>
             </TouchableWithoutFeedback>
@@ -166,4 +124,4 @@ const BottomList = ({
   );
 };
 
-export default BottomList;
+export default BottomListPost;

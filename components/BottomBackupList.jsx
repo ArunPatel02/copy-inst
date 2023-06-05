@@ -8,6 +8,7 @@ import {
 import React, { useContext } from "react";
 import { CustomContext } from "../Appcontext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const BottomBackupList = ({ id, token, navigation }) => {
   const {
@@ -145,17 +146,33 @@ const BottomBackupList = ({ id, token, navigation }) => {
                 setshowhastagBottomModal4(false);
               }}
             >
-              <Text
+              <View
                 style={{
-                  fontSize: 18,
-                  color: "#4f4f4f",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  width: "100%",
                   borderBottomColor: "#00000061",
                   borderBottomWidth: 0.2,
-                  paddingVertical: 18,
                 }}
               >
-                Restore
-              </Text>
+                <MaterialIcons
+                  name="backup"
+                  size={20}
+                  color="#4f4f4f"
+                  style={{ marginRight: 10 }}
+                />
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color: "#4f4f4f",
+                    borderBottomColor: "#00000061",
+                    borderBottomWidth: 0.2,
+                    paddingVertical: 18,
+                  }}
+                >
+                  Restore
+                </Text>
+              </View>
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback
               onPress={() => {
@@ -163,17 +180,33 @@ const BottomBackupList = ({ id, token, navigation }) => {
                 setshowhastagBottomModal5(true);
               }}
             >
-              <Text
+              <View
                 style={{
-                  fontSize: 18,
-                  color: "#4f4f4f",
-                  paddingVertical: 18,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  width: "100%",
                   borderBottomColor: "#00000061",
                   borderBottomWidth: 0.2,
                 }}
               >
-                Change File Name
-              </Text>
+                <MaterialIcons
+                  name="mode-edit"
+                  size={20}
+                  color="#4f4f4f"
+                  style={{ marginRight: 10 }}
+                />
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color: "#4f4f4f",
+                    paddingVertical: 18,
+                    borderBottomColor: "#00000061",
+                    borderBottomWidth: 0.2,
+                  }}
+                >
+                  Change File Name
+                </Text>
+              </View>
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback
               onPress={() => {
@@ -181,17 +214,33 @@ const BottomBackupList = ({ id, token, navigation }) => {
                 setshowhastagBottomModal6(true);
               }}
             >
-              <Text
+              <View
                 style={{
-                  fontSize: 18,
-                  color: "#4f4f4f",
-                  paddingVertical: 18,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  width: "100%",
                   borderBottomColor: "#00000061",
                   borderBottomWidth: 0.2,
                 }}
               >
-                Delete Backup
-              </Text>
+                <MaterialIcons
+                  name="delete"
+                  size={20}
+                  color="#4f4f4f"
+                  style={{ marginRight: 10 }}
+                />
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color: "#4f4f4f",
+                    paddingVertical: 18,
+                    borderBottomColor: "#00000061",
+                    borderBottomWidth: 0.2,
+                  }}
+                >
+                  Delete Backup
+                </Text>
+              </View>
             </TouchableWithoutFeedback>
           </View>
           {/* </View> */}

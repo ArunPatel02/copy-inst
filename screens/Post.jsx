@@ -1,4 +1,5 @@
 import {
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -18,6 +19,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { TouchableHighlight } from "react-native";
 import moment from "moment/moment";
+import { FontAwesome5 } from "@expo/vector-icons";
+import BottomListPost from "../components/BottomListPost";
 
 NativeWindStyleSheet.setOutput({
   default: "native",
@@ -31,17 +34,35 @@ const Post = () => {
     setcreatePostInput,
     updateAsyncStorage,
     timeAgo,
+    showhastagBottomModal7,
+    setshowhastagBottomModal7,
   } = useContext(CustomContext);
   // console.log("this is navi", navigation);
-  useEffect(() => {
-    AsyncStorage.getItem("allPosts").then((res) => {
-      const value = JSON.parse(res);
-      console.log("post values", value);
-      if (value) {
-        setpostList(value);
-      }
-    });
-  }, []);
+  // useEffect(() => {
+  //   AsyncStorage.getItem("allPosts").then((res) => {
+  //     const value = JSON.parse(res);
+  //     console.log("post values", value);
+  //     if (value) {
+  //       setpostList(value);
+  //     }
+  //   });
+  // }, []);
+
+  const [typeOfDate, settypeOfDate] = useState(1);
+  const sortList = (type) => {
+    if (type == 1) {
+      settypeOfDate(1);
+      let value = [...postList];
+      value.sort((a, b) => (a.Date < b.Date ? 1 : -1));
+      setpostList(value);
+    }
+    if (type === 2) {
+      settypeOfDate(2);
+      let value = [...postList];
+      value.sort((a, b) => (a.createdDate < b.createdDate ? 1 : -1));
+      setpostList(value);
+    }
+  };
 
   const Listitem = ({ itemText, time, idx }) => {
     const [avatar, setavatar] = useState("");
@@ -71,18 +92,16 @@ const Post = () => {
       });
 
       // console.log("time" , timeAgo(new Date()) )
-    }, []);
+    }, [typeOfDate]);
 
     const [timeAgoStr, settimeAgoStr] = useState("");
 
     useEffect(() => {
-      settimeAgoStr(moment.utc(time).local().startOf("seconds").fromNow())
-      setInterval(() => {
-        settimeAgoStr(moment.utc(time).local().startOf("seconds").fromNow())
-      }, 1000);
-      
-    }, [])
-    
+      settimeAgoStr(moment.utc(time).local().startOf("seconds").fromNow());
+      // setInterval(() => {
+      //   settimeAgoStr(moment.utc(time).local().startOf("seconds").fromNow());
+      // }, 1000);
+    }, []);
 
     // console.log(avatar, "this is avatar");
 
@@ -152,6 +171,40 @@ const Post = () => {
     <View className="bg-[#f5f5f5]">
       {postList.length ? (
         <>
+          <BottomListPost typeOfDate={typeOfDate} sortList={sortList} />
+          <Pressable
+            android_ripple={{ color: "#63606069" }}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              width: "100%",
+              borderBottomColor: "#00000061",
+              borderBottomWidth: 0.2,
+              paddingHorizontal: 10,
+            }}
+            onPress={() => {
+              setshowhastagBottomModal7(true);
+            }}
+          >
+            <FontAwesome5
+              name="sort-amount-down-alt"
+              size={18}
+              color="#4f4f4f"
+              style={{ marginRight: 10, opacity: 0.6 }}
+            />
+            <Text
+              style={{
+                fontSize: 16,
+                color: "#4f4f4f",
+                paddingVertical: 10,
+                borderBottomColor: "#0001",
+                borderBottomWidth: 0.2,
+              }}
+            >
+              Sort by {typeOfDate === 1 ? "updated" : "creation"} time
+            </Text>
+          </Pressable>
+
           <SwipeListView
             useFlatList={true}
             numColumns={1}
@@ -160,7 +213,7 @@ const Post = () => {
             renderItem={(data, rowMap) => (
               <Listitem
                 itemText={data.item.postText}
-                time={data.item.Date}
+                time={typeOfDate === 1 ? data.item.Date : data.item.createdDate}
                 idx={data.index}
                 key={data.index.toString()}
               />

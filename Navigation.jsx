@@ -31,6 +31,12 @@ import CreateHashtags from "./screens/CreateHashtags";
 import LockSetting from "./screens/LockSetting";
 import BackUp from "./screens/BackUp";
 import BackUpDummy from "./screens/dummy";
+import TermOfUse from "./screens/TermOfUse";
+import HowToUse from "./screens/HowToUse";
+import PrivacyPolicy from "./screens/Policy";
+import SetPassword from "./screens/SetPassword";
+import LockHomeScreen from "./components/LockHomeScreen";
+import { Shadow } from "react-native-shadow-2";
 // import BackUpDummy from "./screens/dummy";
 
 const Stack = createNativeStackNavigator();
@@ -44,7 +50,7 @@ const screen_width = Dimensions.get("screen").width;
 
 // console.log(screen_width)
 
-const Tab_width = screen_width;
+const Tab_width = screen_width * 0.85;
 
 const Each_tab_width = Tab_width / 3;
 
@@ -72,144 +78,147 @@ const MyTabBar = ({ state, descriptors, navigation, ...rest }) => {
       // className="w-full h-[50px] items-center justify-center"
       style={{
         width: screen_width,
-        height: 80,
+        height: 65,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         position: "absolute",
-        bottom: -30,
+        bottom: 10,
         zIndex: 100,
       }}
     >
-      <View
-        // className="h-full rounded-full bg-white w-full flex flex-row items-center justify-between"
-        style={[
-          styles.boxShadow,
-          {
-            height: 80,
-            borderRadius: 100,
-            backgroundColor: "white",
-            width: screen_width,
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            paddingBottom: 30,
-          },
-        ]}
-      >
-        <Animated.View
-          // className="w-1/3 flex flex-row items-center justify-center absolute"
+      <Shadow>
+        <View
+          // className="h-full rounded-full bg-white w-full flex flex-row items-center justify-between"
           style={[
-            styles.boxShift,
+            // styles.boxShadow,
             {
-              transform: [{ translateX: translateX }],
-              width: Each_tab_width,
+              height: 65,
+              borderRadius: 100,
+              backgroundColor: "white",
+              width: screen_width * 0.85,
               display: "flex",
-              justifyContent: "center",
+              flexDirection: "row",
               alignItems: "center",
-              position: "absolute",
-              paddingBottom: 30,
+              justifyContent: "space-between",
+              // paddingBottom: 30,
             },
           ]}
         >
-          <View
-            // className="w-[65] h-[65] rounded-full bg-[#393ec5]"
-            style={{
-              width: 65,
-              height: 65,
-              borderRadius: 100,
-              backgroundColor: "#393ec5",
-            }}
-          ></View>
-        </Animated.View>
-        {state.routes.map((route, index) => {
-          const { options } = descriptors[route.key];
+          <Animated.View
+            // className="w-1/3 flex flex-row items-center justify-center absolute"
+            style={[
+              styles.boxShift,
+              {
+                transform: [{ translateX: translateX }],
+                width: Each_tab_width,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                position: "absolute",
+                padding: 5,
+                // paddingBottom: 30,
+              },
+            ]}
+          >
+            <View
+              // className="w-[65] h-[65] rounded-full bg-[#393ec5]"
+              style={{
+                width: "100%",
+                height: 58,
+                borderRadius: 100,
+                backgroundColor: "#393ec5",
+              }}
+            ></View>
+          </Animated.View>
+          {state.routes.map((route, index) => {
+            const { options } = descriptors[route.key];
 
-          const isFocused = state.index === index;
+            const isFocused = state.index === index;
 
-          const isFocusedSelected = index === startingIndex;
+            const isFocusedSelected = index === startingIndex;
 
-          const onPress = () => {
-            const event = navigation.emit({
-              type: "tabPress",
-              target: route.key,
-              canPreventDefault: true,
-            });
+            const onPress = () => {
+              const event = navigation.emit({
+                type: "tabPress",
+                target: route.key,
+                canPreventDefault: true,
+              });
 
-            state.history = [];
+              state.history = [];
 
-            if (!isFocused && !event.defaultPrevented) {
-              // The `merge: true` option makes sure that the params inside the tab screen are preserved
-              navigation.navigate({ name: route.name, merge: true });
-            }
-          };
+              if (!isFocused && !event.defaultPrevented) {
+                // The `merge: true` option makes sure that the params inside the tab screen are preserved
+                navigation.navigate({ name: route.name, merge: true });
+              }
+            };
 
-          const onLongPress = () => {
-            navigation.emit({
-              type: "tabLongPress",
-              target: route.key,
-            });
-          };
+            const onLongPress = () => {
+              navigation.emit({
+                type: "tabLongPress",
+                target: route.key,
+              });
+            };
 
-          const TabStyleView = ({ children }) => {
+            const TabStyleView = ({ children }) => {
+              return (
+                <TouchableOpacity
+                  accessibilityRole="button"
+                  accessibilityState={isFocused ? { selected: true } : {}}
+                  accessibilityLabel={options.tabBarAccessibilityLabel}
+                  testID={options.tabBarTestID}
+                  onPress={onPress}
+                  activeOpacity={1}
+                  onLongPress={onLongPress}
+                  // className="w-1/3 h-full flex flex-row items-center justify-center"
+                  style={{
+                    width: Each_tab_width,
+                    // height: 50,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  {children}
+                </TouchableOpacity>
+              );
+            };
+
             return (
-              <TouchableOpacity
-                accessibilityRole="button"
-                accessibilityState={isFocused ? { selected: true } : {}}
-                accessibilityLabel={options.tabBarAccessibilityLabel}
-                testID={options.tabBarTestID}
-                onPress={onPress}
-                activeOpacity={1}
-                onLongPress={onLongPress}
-                // className="w-1/3 h-full flex flex-row items-center justify-center"
-                style={{
-                  width: Each_tab_width,
-                  // height: 50,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                {children}
-              </TouchableOpacity>
-            );
-          };
-
-          return (
-            <>
-              {/* <Text style={{ color: isFocused ? '#673ab7' : '#222' }}>
+              <>
+                {/* <Text style={{ color: isFocused ? '#673ab7' : '#222' }}>
               {label}
             </Text> */}
-              {index === 0 ? (
-                <TabStyleView kay={index}>
-                  <Feather
-                    name="menu"
-                    size={isFocusedSelected ? 36 : 28}
-                    color={isFocusedSelected ? "white" : "gray"}
-                  />
-                </TabStyleView>
-              ) : index === 1 ? (
-                <TabStyleView kay={index}>
-                  <Fontisto
-                    name="hashtag"
-                    size={isFocusedSelected ? 28 : 24}
-                    color={isFocusedSelected ? "white" : "gray"}
-                  />
-                </TabStyleView>
-              ) : (
-                <TabStyleView kay={index}>
-                  <MaterialIcons
-                    name="person-outline"
-                    size={isFocusedSelected ? 38 : 32}
-                    color={isFocusedSelected ? "white" : "gray"}
-                  />
-                </TabStyleView>
-              )}
-            </>
-          );
-        })}
-      </View>
+                {index === 0 ? (
+                  <TabStyleView kay={index}>
+                    <Feather
+                      name="menu"
+                      size={isFocusedSelected ? 36 : 28}
+                      color={isFocusedSelected ? "white" : "gray"}
+                    />
+                  </TabStyleView>
+                ) : index === 1 ? (
+                  <TabStyleView kay={index}>
+                    <Fontisto
+                      name="hashtag"
+                      size={isFocusedSelected ? 28 : 24}
+                      color={isFocusedSelected ? "white" : "gray"}
+                    />
+                  </TabStyleView>
+                ) : (
+                  <TabStyleView kay={index}>
+                    <MaterialIcons
+                      name="person-outline"
+                      size={isFocusedSelected ? 38 : 32}
+                      color={isFocusedSelected ? "white" : "gray"}
+                    />
+                  </TabStyleView>
+                )}
+              </>
+            );
+          })}
+        </View>
+      </Shadow>
     </View>
   );
 };
@@ -306,17 +315,20 @@ const Navigation = () => {
     showhastagBottomModal4,
     showhastagBottomModal5,
     showhastagBottomModal6,
+    showhastagBottomModal7,
   } = useContext(CustomContext);
 
   return (
     <>
       <Alert visible={visible} setvisible={setvisible} />
+      <LockHomeScreen />
       {showhastagBottomModal ||
       showhastagBottomModal2 ||
       showhastagBottomModal3 ||
       showhastagBottomModal4 ||
       showhastagBottomModal5 ||
-      showhastagBottomModal6 ? (
+      showhastagBottomModal6 ||
+      showhastagBottomModal7 ? (
         <View
           style={{
             // backgroundColor: "#b3b3b370",
@@ -497,6 +509,44 @@ const Navigation = () => {
               ),
             })}
           />
+          <Stack.Screen
+            name="tarmOfUse"
+            component={TermOfUse}
+            options={({ navigation, route }) => ({
+              headerTitle: (props) => (
+                <Text className="text-xl font-semibold">Terms of use</Text>
+              ),
+            })}
+          />
+          <Stack.Screen
+            name="privacyPolicy"
+            component={PrivacyPolicy}
+            options={({ navigation, route }) => ({
+              headerTitle: (props) => (
+                <Text className="text-xl font-semibold">Privacy policy</Text>
+              ),
+            })}
+          />
+          <Stack.Screen
+            name="howToUse"
+            component={HowToUse}
+            options={({ navigation, route }) => ({
+              headerTitle: (props) => (
+                <Text className="text-xl font-semibold">How to use</Text>
+              ),
+              headerShown: false,
+            })}
+          />
+          <Stack.Screen
+            name="setPassword"
+            component={SetPassword}
+            options={({ navigation, route }) => ({
+              headerTitle: (props) => (
+                <Text className="text-xl font-semibold">How to use</Text>
+              ),
+              headerShown: false,
+            })}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </>
@@ -507,15 +557,15 @@ export default Navigation;
 
 const styles = StyleSheet.create({
   boxShadow: {
-    shadowColor: "black",
+    shadowColor: "#000",
     shadowOffset: {
-      width: -12,
+      width: 0,
       height: 12,
     },
-    shadowOpacity: 0.8,
+    shadowOpacity: 0.58,
     shadowRadius: 16.0,
 
-    elevation: 4,
+    elevation: 24,
     // borderTopColor: "black",
     // borderWidth: 0.3,
   },
