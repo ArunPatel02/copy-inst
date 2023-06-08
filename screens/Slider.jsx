@@ -6,12 +6,15 @@ import {
   Text,
   View,
   Dimensions,
+  BackHandler,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import SlideItem from "./SlideItem";
 import Pagination from "./Pagination";
+import Carousel from "react-native-reanimated-carousel";
+import { gestureHandlerRootHOC } from "react-native-gesture-handler";
 
-const { width } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
 const Slides = [
   {
@@ -100,9 +103,29 @@ const Slides = [
   },
 ];
 
-const Slider = ({ setisTutorialDone, navigation }) => {
+const Slider = ({ setisTutorialDone, navigation, isTutorialDone }) => {
   const [index, setIndex] = useState(0);
   const scrollX = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    function backAction() {
+      if (isTutorialDone) {
+        // BackHandler.exitApp();
+      }
+      return true;
+    }
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    if (isTutorialDone || navigation) {
+      backHandler.remove();
+    }
+
+    return () => backHandler.remove();
+  }, [isTutorialDone]);
 
   const flatListRef = useRef(null);
 
@@ -130,10 +153,11 @@ const Slider = ({ setisTutorialDone, navigation }) => {
 
   const handleOnNext = () => {
     if (flatListRef.current) {
-      flatListRef.current.scrollToIndex({
-        animated: true,
-        index: index + 1,
-      });
+      // flatListRef.current.scrollToIndex({
+      //   animated: true,
+      //   index: index + 1,
+      // });
+      flatListRef.current?.scrollTo({ count: 1, animated: true });
     }
   };
 
@@ -142,8 +166,8 @@ const Slider = ({ setisTutorialDone, navigation }) => {
   }).current;
 
   return (
-    <View>
-      <FlatList
+    <View style={{ flex: 1 }}>
+      {/* <Animated.FlatList
         ref={flatListRef}
         data={Slides}
         renderItem={({ item }) => <SlideItem item={item} />}
@@ -159,7 +183,25 @@ const Slider = ({ setisTutorialDone, navigation }) => {
         onScroll={handleOnScroll}
         onViewableItemsChanged={handleOnViewableItemsChanged}
         viewabilityConfig={viewabilityConfig}
-        scrollEventThrottle={16}
+        // scrollEventThrottle={16}
+      /> */}
+      <Carousel
+        loop={false}
+        width={width}
+        height={height}
+        // height={width}
+        ref={flatListRef}
+        testID={"xxx"}
+        style={{ width: "100%" }}
+        data={Slides}
+        pagingEnabled={true}
+        panGestureHandlerProps={{
+          activeOffsetX: [-10, 10],
+        }}
+        onProgressChange={(_, absoluteProgress) => {
+          setIndex(Math.round(absoluteProgress));
+        }}
+        renderItem={({ item, index }) => <SlideItem item={item} key={index} />}
       />
       <Pagination
         data={Slides}
@@ -173,6 +215,6 @@ const Slider = ({ setisTutorialDone, navigation }) => {
   );
 };
 
-export default Slider;
+export default gestureHandlerRootHOC(Slider);
 
 const styles = StyleSheet.create({});

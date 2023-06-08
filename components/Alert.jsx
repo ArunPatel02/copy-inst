@@ -75,20 +75,20 @@ const Alert = ({ visible, setvisible }) => {
               style={{
                 paddingTop: 15,
                 paddingBottom: 30,
-                paddingRight: 80,
+                paddingRight: !visible.button ? 80 : 100,
                 paddingLeft: 50,
                 backgroundColor: "#0d14ab",
                 display: "flex",
                 position: "absolute",
                 bottom: -20,
                 right: -30,
-                borderRadius: 32,
+                borderRadius: !visible.button ? 32 : 0,
               }}
               onPress={() => {
-                setvisible({ ...visible, show: false });
                 if (visible.callback) {
                   visible.callback();
                 }
+                setvisible({ ...visible, show: false });
               }}
             >
               <Text
@@ -101,6 +101,36 @@ const Alert = ({ visible, setvisible }) => {
                 {visible.button || "Ok"}
               </Text>
             </TouchableOpacity>
+            {visible.button ? (
+              <TouchableOpacity
+                activeOpacity={1}
+                style={{
+                  paddingTop: 15,
+                  paddingBottom: 30,
+                  paddingRight: 50,
+                  paddingLeft: 100,
+                  backgroundColor: "red",
+                  display: "flex",
+                  position: "absolute",
+                  bottom: -20,
+                  left: -30,
+                  // borderRadius: 32,
+                }}
+                onPress={() => {
+                  setvisible({ ...visible, show: false });
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color: "white",
+                    fontWeight: "600",
+                  }}
+                >
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+            ) : null}
           </View>
           {visible.extaText ? (
             <Text

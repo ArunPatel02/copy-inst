@@ -1,8 +1,14 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, useEffect, useRef, useState } from "react";
 import { AppState } from "react-native";
+import * as WebBrowser from "expo-web-browser";
+import * as Google from "expo-auth-session/providers/google";
+import AuthSession from "expo-auth-session";
+import GDrive from "expo-google-drive-api-wrapper";
 
 export const CustomContext = createContext();
+
+WebBrowser.maybeCompleteAuthSession();
 
 const Appcontext = ({ children, setAppIsReady }) => {
   const [createPostInput, setcreatePostInput] = useState("");
@@ -33,6 +39,8 @@ const Appcontext = ({ children, setAppIsReady }) => {
       });
     }, 200);
   };
+
+  const inputRef = useRef(null);
 
   const [showhastagBottomModal, setshowhastagBottomModal] = useState(false);
   const [showhastagBottomModal2, setshowhastagBottomModal2] = useState(false);
@@ -68,7 +76,7 @@ const Appcontext = ({ children, setAppIsReady }) => {
   const [lockactive, setlockactive] = useState(false);
   const [lockPin, setlockPin] = useState([]);
   const [lockFirstTime, setlockFirstTime] = useState(true);
-  const [isScreenLock, setisScreenLock] = useState(true);
+  const [isScreenLock, setisScreenLock] = useState(false);
   useEffect(() => {
     try {
       AsyncStorage.getItem("hashTagsGroups").then((res) => {
@@ -100,6 +108,7 @@ const Appcontext = ({ children, setAppIsReady }) => {
       setAppIsReady(true);
     }
   }, []);
+
   const [backUpfiles, setbackUpfiles] = useState([]);
 
   const [appState, setAppState] = useState(AppState.currentState);
@@ -132,6 +141,153 @@ const Appcontext = ({ children, setAppIsReady }) => {
         });
       }
       setAppState(nextAppState);
+    }
+  };
+
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    webClientId:
+      "468150064386-flrvupg5jusj8qf3oedoljo9r0fotb74.apps.googleusercontent.com",
+    expoClientId:
+      "468150064386-flrvupg5jusj8qf3oedoljo9r0fotb74.apps.googleusercontent.com",
+    androidClientId:
+      "468150064386-4hq112vv05mcqjh7gvkt4oikvq8krpfv.apps.googleusercontent.com",
+    iosClientId:
+      "468150064386-4hq112vv05mcqjh7gvkt4oikvq8krpfv.apps.googleusercontent.com",
+    scopes: ["https://www.googleapis.com/auth/drive"],
+    // responseType: "code",
+    // shouldAutoExchangeCode: false,
+    extraParams: {
+      // access_type: "offline",
+      expires_in: 3600 * 24 * 30 * 12,
+    },
+    // prompt : "consent"
+  });
+
+  const [token, setToken] = useState("");
+  const [userInfo, setUserInfo] = useState({});
+  const [storage, setstorage] = useState({});
+  const [loading, setloading] = useState(false);
+  const [folder, setfolder] = useState("");
+  const [isLoginOut, setisLoginOut] = useState(false);
+  const [clickedBackupId, setclickedBackupId] = useState("");
+  const [loaderVisible, setloaderVisible] = useState(false);
+
+  const getFileDetails = async (id, savedToken) => {
+    try {
+      // console.log("start file fetching");
+      const fileData = await fetch(
+        `https://www.googleapis.com/drive/v3/files/${id}?fields=id,name,size,modifiedTime`,
+        {
+          headers: { Authorization: `Bearer ${savedToken}` },
+        }
+      );
+      const fileDataParse = await fileData.json();
+      // console.log("this is file details", fileDataParse);
+      setbackUpfiles((pre) => [fileDataParse, ...pre]);
+    } catch (error) {
+      // console.log(error, "error while fetching the file");
+    }
+  };
+
+  const getFileList = async (folder, savedToken) => {
+    // https://www.googleapis.com/drive/v3/files?q=%27arun%27&fields=*
+    try {
+      // console.log("start file fetching");
+      const fileData = await fetch(
+        `https://www.googleapis.com/drive/v3/files?q=%27${folder}%27%20in%20parents&fields=*`,
+        {
+          headers: { Authorization: `Bearer ${savedToken}` },
+        }
+      );
+      const fileDataParse = await fileData.json();
+      const data = fileDataParse.files.map(
+        ({ id, name, size, modifiedTime }) => ({ id, name, size, modifiedTime })
+      );
+      // console.log("this is filelist details", data);
+      setbackUpfiles(data);
+    } catch (error) {
+      // console.log(error, "error while fetching the file");
+    }
+  };
+
+  const gdInit = async (token) => {
+    GDrive.setAccessToken(token);
+    GDrive.init();
+    // const aboutData = await GDrive.about;
+    // // console.log("this is about data", aboutData);
+  };
+
+  useEffect(() => {
+    // console.log("fetching the token started");
+    AsyncStorage.getItem("token").then((tokenSaved) => {
+      if (JSON.parse(tokenSaved)) {
+        setloading(true);
+        setToken(JSON.parse(tokenSaved));
+      } else {
+        setloading(false);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    console.log("started seting the data", response);
+    if (isLoginOut) return;
+    if (response?.type === "success") {
+      console.log("token", response.authentication.accessToken);
+      setToken(response.authentication.accessToken);
+      gdInit(response.authentication.accessToken);
+      getUserInfo(response.authentication.accessToken);
+      AsyncStorage.setItem(
+        "token",
+        JSON.stringify(response.authentication.accessToken)
+      ).then(() => {
+        // console.log("token saved");
+      });
+    }
+    if (!response && token) {
+      gdInit(token);
+      getUserInfo(token);
+    }
+  }, [response, token]);
+
+  const getUserInfo = async (savedToken) => {
+    if (!savedToken) return;
+    // console.log(savedToken, "start fetching");
+    try {
+      const response = await fetch(
+        "https://www.googleapis.com/userinfo/v2/me",
+        {
+          headers: { Authorization: `Bearer ${savedToken}` },
+        }
+      );
+
+      const user = await response.json();
+
+      const FetchSrorage = await fetch(
+        "https://www.googleapis.com/drive/v3/about?fields=storageQuota",
+        {
+          headers: { Authorization: `Bearer ${savedToken}` },
+        }
+      );
+      const restStorage = await FetchSrorage.json();
+      // console.log("this is user", user, restStorage);
+      if (user && restStorage) {
+        setstorage(restStorage.storageQuota);
+        setUserInfo(user);
+      }
+      const createFolder = await GDrive.files.safeCreateFolder({
+        name: "copyInst",
+        parents: ["root"],
+      });
+      // const folderParse = await folder.json();
+      // console.log(createFolder, "folder");
+      getFileList(createFolder, savedToken);
+      setfolder(createFolder);
+      setloading(false);
+    } catch (error) {
+      // console.log(error, "this is error");
+      setloading(false);
+      // Add your own error handler here
     }
   };
 
@@ -185,6 +341,24 @@ const Appcontext = ({ children, setAppIsReady }) => {
         setlockFirstTime,
         isScreenLock,
         setisScreenLock,
+        promptAsync,
+        token,
+        setToken,
+        userInfo,
+        setUserInfo,
+        loading,
+        setloading,
+        folder,
+        setfolder,
+        isLoginOut,
+        setisLoginOut,
+        clickedBackupId,
+        setclickedBackupId,
+        storage,
+        setstorage,
+        inputRef,
+        loaderVisible,
+        setloaderVisible,
       }}
     >
       {children}

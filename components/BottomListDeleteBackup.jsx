@@ -17,6 +17,7 @@ const BottomListDeleteBackup = ({ id, token, navigation }) => {
     setvisible,
     backUpfiles,
     setbackUpfiles,
+    setloaderVisible,
   } = useContext(CustomContext);
   const [randomInt, setrandomInt] = useState(0);
   const [error, seterror] = useState(false);
@@ -25,6 +26,8 @@ const BottomListDeleteBackup = ({ id, token, navigation }) => {
     setrandomInt(Math.floor(Math.random() * 999999 + 100000));
   }, []);
   const deleteFile = async () => {
+    setshowhastagBottomModal6(false);
+    setloaderVisible(true);
     try {
       console.log("start deleting the file", id);
       const fileData = await fetch(
@@ -34,12 +37,13 @@ const BottomListDeleteBackup = ({ id, token, navigation }) => {
           method: "DELETE",
         }
       );
-    //   const fileDataParse = await fileData.json();
-    //   console.log("this is file delete", fileData);
+      //   const fileDataParse = await fileData.json();
+      //   console.log("this is file delete", fileData);
       setbackUpfiles((pre) => pre.filter((item) => item.id !== id));
-      setshowhastagBottomModal6(false);
+      setloaderVisible(false);
     } catch (error) {
       console.log(error, "error while deleting the file");
+      setloaderVisible(false);
     }
   };
   return (
@@ -145,7 +149,9 @@ const BottomListDeleteBackup = ({ id, token, navigation }) => {
                     value={inputValue}
                   />
                   <View style={{ position: "absolute", right: 0 }}>
-                    <Entypo name="cross" size={35} color="gray" />
+                    <TouchableWithoutFeedback onPress={() => setinputValue("")}>
+                      <Entypo name="cross" size={35} color="gray" />
+                    </TouchableWithoutFeedback>
                   </View>
                 </View>
                 {error ? (

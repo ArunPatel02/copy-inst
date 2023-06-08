@@ -133,7 +133,7 @@ const UserPage = () => {
         }
         onPress={() => {}}
       />
-      {/* <View className="h-28"></View> */}
+      <View className="h-28"></View>
     </ScrollView>
   );
 };

@@ -26,7 +26,7 @@ const SetPassword = () => {
   const navigation = useNavigation();
 
   const anim = useRef(new Animated.Value(0));
-
+  setlockactive(false);
   const shake = useCallback(() => {
     // makes the sequence loop
     Animated.loop(
@@ -353,7 +353,7 @@ const SetPassword = () => {
                               //
                               setpin([]);
                               setconfirmPinWrong(true);
-                              Vibration.vibrate(100)
+                              Vibration.vibrate(100);
                               shake();
                               setTimeout(() => {
                                 setconfirmScreen(false);

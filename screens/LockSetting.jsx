@@ -62,8 +62,14 @@ const LockSetting = () => {
         useNativeDriver: true,
         duration: 300,
       }).start();
+    } else {
+      Animated.timing(currentpostion, {
+        toValue: 0,
+        useNativeDriver: true,
+        duration: 300,
+      }).start();
     }
-  }, []);
+  }, [lockactive]);
 
   console.log("current", currentpostion);
 

@@ -15,7 +15,7 @@ import { NavigationContainer, ThemeProvider } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Post from "./screens/Post";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import Hashtag from "./screens/Hashtag";
 
 import UserPage from "./screens/UserPage";
@@ -37,6 +37,8 @@ import PrivacyPolicy from "./screens/Policy";
 import SetPassword from "./screens/SetPassword";
 import LockHomeScreen from "./components/LockHomeScreen";
 import { Shadow } from "react-native-shadow-2";
+import { debounce } from "lodash";
+import { ActivityIndicator } from "react-native";
 // import BackUpDummy from "./screens/dummy";
 
 const Stack = createNativeStackNavigator();
@@ -87,7 +89,7 @@ const MyTabBar = ({ state, descriptors, navigation, ...rest }) => {
         zIndex: 100,
       }}
     >
-      <Shadow>
+      <Shadow startColor="#c9c9c952" distance={15}>
         <View
           // className="h-full rounded-full bg-white w-full flex flex-row items-center justify-between"
           style={[
@@ -316,7 +318,19 @@ const Navigation = () => {
     showhastagBottomModal5,
     showhastagBottomModal6,
     showhastagBottomModal7,
+    inputRef,
+    loaderVisible,
   } = useContext(CustomContext);
+
+  const changeTextDebounced = (text) => {
+    console.log("debounced", text);
+    setfontSearch(text);
+  };
+
+  const changeTextDebouncer = useCallback(
+    debounce(changeTextDebounced, 800),
+    []
+  );
 
   return (
     <>
@@ -342,6 +356,25 @@ const Navigation = () => {
             zIndex: 10000,
           }}
         ></View>
+      ) : null}
+      {loaderVisible ? (
+        <View
+          style={{
+            // backgroundColor: "#b3b3b370",
+            backgroundColor: "black",
+            opacity: 0.5,
+            position: "absolute",
+            top: 0,
+            right: 0,
+            left: 0,
+            bottom: 0,
+            zIndex: 10000,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <ActivityIndicator size="large" color={"#393ec4"} />
+        </View>
       ) : null}
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ animation: "slide_from_right" }}>
@@ -470,6 +503,8 @@ const Navigation = () => {
                     cursorColor="#393ec4"
                     className="flex w-[88%] text-base"
                     collapsable
+                    ref={inputRef}
+                    onChangeText={changeTextDebouncer}
                     onSubmitEditing={(e) => {
                       // console.log("buttom is clicked", e.nativeEvent.text);
                       if (e.nativeEvent.text) {

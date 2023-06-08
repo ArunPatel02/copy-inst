@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Pressable,
 } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Entypo } from "@expo/vector-icons";
 import { styled } from "nativewind";
 import { CustomContext } from "../Appcontext";
@@ -20,7 +20,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import moment from "moment";
 
 const AddStyleText = () => {
-  const { fontSearch, setfontSearch, setcreatePostInput, updateScreteInput } =
+  const { fontSearch, setfontSearch, setcreatePostInput, updateScreteInput , inputRef } =
     useContext(CustomContext);
 
   const [fontArray, setfontArray] = useState([]);
@@ -37,16 +37,24 @@ const AddStyleText = () => {
   useEffect(() => {
     AsyncStorage.getItem("fontSearchHistory").then((value) => {
       console.log(
-        JSON.parse(value).sort((a, b) => a.Date < b.Date?1:-1),
+        JSON.parse(value).sort((a, b) => (a.Date < b.Date ? 1 : -1)),
         "result setfontArrayHistory"
       );
       const result = JSON.parse(value);
-      if (result)
-        setfontArrayHistory(
-          result.sort((a, b) => a.Date < b.Date?1:-1)
-        );
+      if (result){
+        setfontArrayHistory(result.sort((a, b) => (a.Date < b.Date ? 1 : -1)));
+      }
     });
   }, []);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      console.log("this is input ref" , inputRef.current)
+      setTimeout(() => {
+        inputRef.current.focus();
+      }, 500);
+    }
+  }, [inputRef.current]);
 
   const Listitem = ({ itemText, time }) => {
     return (

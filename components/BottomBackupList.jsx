@@ -21,10 +21,12 @@ const BottomBackupList = ({ id, token, navigation }) => {
     setpostList,
     setfontSearch,
     sethashtagGroup,
+    setloaderVisible,
   } = useContext(CustomContext);
   const getFileContent = async () => {
     try {
       // console.log("start file fetching");
+      setloaderVisible(true);
       const fileData = await fetch(
         `https://www.googleapis.com/drive/v3/files/${id}?alt=media&fields=*`,
         {
@@ -49,10 +51,13 @@ const BottomBackupList = ({ id, token, navigation }) => {
                 JSON.stringify(fileDataParse[key])
               );
             })
-            .then((all) => {})
+            .then((all) => {
+              setloaderVisible(false);
+            })
         );
       }
     } catch (error) {
+      setloaderVisible(false);
       // console.log(error, "error while fetching the file");
     }
   };

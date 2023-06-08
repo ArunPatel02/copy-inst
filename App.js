@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { BackHandler, StyleSheet, Text, View, Alert as reactNativeAlert } from 'react-native';
 import Navigation from './Navigation';
 import { NativeWindStyleSheet } from 'nativewind';
 import Appcontext from './Appcontext';
@@ -25,7 +25,7 @@ export default function App() {
       try {
         // Pre-load fonts, make any API calls you need to do here
         const item = await AsyncStorage.getItem("isTutorialDone")
-        console.log(item , "this is item")
+        console.log(item, "this is item")
         if (item) {
           setisTutorialDone(true)
         }
@@ -38,6 +38,7 @@ export default function App() {
 
     prepare();
   }, []);
+
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
@@ -53,7 +54,7 @@ export default function App() {
       <StatusBar style="auto" />
       {/* <Alert /> */}
       <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-        {!isTutorialDone ? <Slider setisTutorialDone={setisTutorialDone} /> :
+        {!isTutorialDone ? <Slider setisTutorialDone={setisTutorialDone} isTutorialDone={isTutorialDone} /> :
           <Navigation />}
       </View>
     </Appcontext>

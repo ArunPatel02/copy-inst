@@ -35,7 +35,7 @@ const BottomListPost = ({ navigation, sortList, typeOfDate }) => {
           <View
             style={{
               backgroundColor: "white",
-            //   paddingHorizontal: 15,
+              //   paddingHorizontal: 15,
               //   paddingBottom: 30,
               overflow: "hidden",
               //   borderRadius: 30,
@@ -61,7 +61,7 @@ const BottomListPost = ({ navigation, sortList, typeOfDate }) => {
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback
               onPress={() => {
-                sortList(2)
+                sortList(2);
                 setshowhastagBottomModal7(false);
               }}
             >
@@ -70,10 +70,10 @@ const BottomListPost = ({ navigation, sortList, typeOfDate }) => {
                   flexDirection: "row",
                   alignItems: "center",
                   width: "100%",
-                //   borderBottomColor: "#00000061",
-                //   borderBottomWidth: 0.2,
+                  //   borderBottomColor: "#00000061",
+                  //   borderBottomWidth: 0.2,
                   justifyContent: "center",
-                  backgroundColor : typeOfDate !== 1 ? "#393ec52b" : "white",
+                  backgroundColor: typeOfDate !== 1 ? "#393ec52b" : "white",
                 }}
               >
                 <Text
@@ -89,7 +89,7 @@ const BottomListPost = ({ navigation, sortList, typeOfDate }) => {
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback
               onPress={() => {
-                sortList(1)
+                sortList(1);
                 setshowhastagBottomModal7(false);
               }}
             >
@@ -101,7 +101,7 @@ const BottomListPost = ({ navigation, sortList, typeOfDate }) => {
                   borderBottomColor: "#00000061",
                   borderBottomWidth: 0.2,
                   justifyContent: "center",
-                  backgroundColor : typeOfDate === 1 ? "#393ec52b" : "white",
+                  backgroundColor: typeOfDate === 1 ? "#393ec52b" : "white",
                 }}
               >
                 <Text

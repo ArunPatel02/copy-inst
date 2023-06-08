@@ -18,43 +18,30 @@ const Pagination = ({
   index,
   handleOnNext,
   setisTutorialDone,
-  navigation
+  navigation,
 }) => {
-
   return (
     <View style={styles.container}>
       <View style={styles.dotcontainer}>
         {data.map((_, idx) => {
-          const inputRange = [
-            (idx - 1) * width,
-            idx * width,
-            (idx + 1) * width,
-          ];
+          // const inputRange = [
+          //   (idx - 1) * width,
+          //   idx * width,
+          //   (idx + 1) * width,
+          // ];
 
-          const dotWidth = scrollX.interpolate({
-            inputRange,
-            outputRange: [12, 30, 12],
-            extrapolate: "clamp",
-          });
-
-          const opacity = scrollX.interpolate({
-            inputRange,
-            outputRange: [0.2, 1, 0.1],
-            extrapolate: "clamp",
-          });
-
-          const backgroundColor = scrollX.interpolate({
-            inputRange,
-            outputRange: ["#ccc", "#393ec5", "#ccc"],
-            extrapolate: "clamp",
-          });
+          // const backgroundColor = scrollX.interpolate({
+          //   inputRange,
+          //   outputRange: ["#ccc", "#393ec5", "#ccc"],
+          //   extrapolate: "clamp",
+          // });
 
           return (
             <Animated.View
               key={idx.toString()}
               style={[
                 styles.dot,
-                { backgroundColor },
+                { backgroundColor: idx === index ? "#393ec5" : "#ccc" },
                 // idx === index && styles.dotActive,
               ]}
             />
@@ -91,7 +78,7 @@ const Pagination = ({
           onPress={async () => {
             if (index === 4) {
               if (navigation) {
-                navigation.goBack()
+                navigation.goBack();
                 return;
               }
               if (setisTutorialDone) {

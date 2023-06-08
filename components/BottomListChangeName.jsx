@@ -17,8 +17,9 @@ const BottomListChangeName = ({ id, token, navigation }) => {
     setvisible,
     backUpfiles,
     setbackUpfiles,
+    setloaderVisible,
   } = useContext(CustomContext);
-  const [fileName, setfileName] = useState();
+  const [fileName, setfileName] = useState("");
   const [error, seterror] = useState(false);
 
   useEffect(() => {
@@ -34,6 +35,9 @@ const BottomListChangeName = ({ id, token, navigation }) => {
   }, [id, backUpfiles]);
 
   const changeFileName = async () => {
+    setshowhastagBottomModal5(false);
+    setloaderVisible(true);
+
     try {
       console.log("start file updation", id, token, fileName);
       //   const fileData = await fetch(
@@ -67,15 +71,19 @@ const BottomListChangeName = ({ id, token, navigation }) => {
 
       let data = await response.json();
       console.log(data);
+      if (data) {
+        setloaderVisible(false);
+      }
       setbackUpfiles((pre) =>
         pre.map((item) =>
           item.id === id ? { ...item, name: `${fileName}.json` } : item
         )
       );
-      setshowhastagBottomModal5(false);
-    //   alert("filename update successfully")
+
+      //   alert("filename update successfully")
     } catch (error) {
       console.log(error.message, "error while fetching the file");
+      setloaderVisible(false);
     }
   };
   return (
@@ -164,7 +172,9 @@ const BottomListChangeName = ({ id, token, navigation }) => {
                     }}
                   />
                   <View style={{ position: "absolute", right: 0 }}>
-                    <Entypo name="cross" size={35} color="gray" />
+                    <TouchableWithoutFeedback onPress={() => setfileName("")}>
+                      <Entypo name="cross" size={35} color="gray" />
+                    </TouchableWithoutFeedback>
                   </View>
                 </View>
                 {error ? (

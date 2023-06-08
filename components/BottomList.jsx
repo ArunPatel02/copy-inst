@@ -15,8 +15,12 @@ const BottomList = ({
   setshowhastagBottomModal,
   navigation,
 }) => {
-  const { showhastagBottomModal2, setshowhastagBottomModal2 } =
-    useContext(CustomContext);
+  const {
+    showhastagBottomModal2,
+    setshowhastagBottomModal2,
+    setvisible,
+    postList,
+  } = useContext(CustomContext);
   return (
     <>
       {/* {showhastagBottomModal ? (
@@ -128,7 +132,19 @@ const BottomList = ({
             <TouchableWithoutFeedback
               onPress={() => {
                 setshowhastagBottomModal(false);
-                setshowhastagBottomModal2(true);
+                if (postList.length) {
+                  setshowhastagBottomModal2(true);
+                } else {
+                  setvisible({
+                    show: true,
+                    topHeading: " Select a Post",
+                    text: "Please use it after Creating atleast one post",
+                    heading: "No Post Added",
+                    button: "",
+                    extaText: "",
+                    callback: null,
+                  });
+                }
               }}
             >
               <View
