@@ -39,6 +39,8 @@ import LockHomeScreen from "./components/LockHomeScreen";
 import { Shadow } from "react-native-shadow-2";
 import { debounce } from "lodash";
 import { ActivityIndicator } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
+import CopyStyleText from "./screens/CopyStyleText";
 // import BackUpDummy from "./screens/dummy";
 
 const Stack = createNativeStackNavigator();
@@ -52,9 +54,9 @@ const screen_width = Dimensions.get("screen").width;
 
 // console.log(screen_width)
 
-const Tab_width = screen_width * 0.85;
+const Tab_width = screen_width * 0.9;
 
-const Each_tab_width = Tab_width / 3;
+const Each_tab_width = Tab_width / 4;
 
 const MyTabBar = ({ state, descriptors, navigation, ...rest }) => {
   const [translateX] = useState(new Animated.Value(0));
@@ -98,7 +100,7 @@ const MyTabBar = ({ state, descriptors, navigation, ...rest }) => {
               height: 65,
               borderRadius: 100,
               backgroundColor: "white",
-              width: screen_width * 0.85,
+              width: screen_width * 0.9,
               display: "flex",
               flexDirection: "row",
               alignItems: "center",
@@ -207,6 +209,14 @@ const MyTabBar = ({ state, descriptors, navigation, ...rest }) => {
                       color={isFocusedSelected ? "white" : "gray"}
                     />
                   </TabStyleView>
+                ) : index === 2 ? (
+                  <TabStyleView kay={index}>
+                    <FontAwesome
+                      name="font"
+                      size={isFocusedSelected ? 28 : 24}
+                      color={isFocusedSelected ? "white" : "gray"}
+                    />
+                  </TabStyleView>
                 ) : (
                   <TabStyleView kay={index}>
                     <MaterialIcons
@@ -226,7 +236,22 @@ const MyTabBar = ({ state, descriptors, navigation, ...rest }) => {
 };
 
 const Home = (props) => {
-  const { setshowhastagBottomModal } = useContext(CustomContext);
+  const {
+    setshowhastagBottomModal,
+    setfontSearch,
+    fontSearch,
+    fontSearchvalue,
+    setfontSearchvalue,
+  } = useContext(CustomContext);
+  const changeTextDebounced = (text) => {
+    console.log("debounced", text);
+    setfontSearch(text);
+  };
+
+  const changeTextDebouncer = useCallback(
+    debounce(changeTextDebounced, 800),
+    []
+  );
   return (
     <Tab.Navigator
       sceneContainerStyle={{ marginBottom: 10 }}
@@ -278,6 +303,42 @@ const Home = (props) => {
           ),
         })}
       />
+
+      <Tab.Screen
+        name="Fonts"
+        component={CopyStyleText}
+        options={({ navigation, route }) => ({
+          unmountOnBlur: true,
+          headerTitle: (props) => (
+            <Text className="text-xl font-semibold"></Text>
+          ),
+
+          headerRight: () => (
+            <>
+              <TextInput
+                placeholder="English Letter or numbers"
+                autoFocus={true}
+                cursorColor="#393ec4"
+                className="flex text-base"
+                style={{ width: screen_width * 0.95 }}
+                collapsable
+                value={fontSearchvalue}
+                // ref={inputRef}
+                onChangeText={(text) => {
+                  setfontSearchvalue(text);
+                  changeTextDebouncer(text);
+                }}
+                onSubmitEditing={(e) => {
+                  // console.log("buttom is clicked", e.nativeEvent.text);
+                  if (e.nativeEvent.text) {
+                    setfontSearch(e.nativeEvent.text);
+                  }
+                }}
+              />
+            </>
+          ),
+        })}
+      />
       <Tab.Screen
         name="Profile"
         component={UserPage}
@@ -320,6 +381,8 @@ const Navigation = () => {
     showhastagBottomModal7,
     inputRef,
     loaderVisible,
+    fontSearchvalue,
+    setfontSearchvalue,
   } = useContext(CustomContext);
 
   const changeTextDebounced = (text) => {
@@ -504,7 +567,11 @@ const Navigation = () => {
                     className="flex w-[88%] text-base"
                     collapsable
                     ref={inputRef}
-                    onChangeText={changeTextDebouncer}
+                    value={fontSearchvalue}
+                    onChangeText={(text) => {
+                      setfontSearchvalue(text);
+                      changeTextDebouncer(text);
+                    }}
                     onSubmitEditing={(e) => {
                       // console.log("buttom is clicked", e.nativeEvent.text);
                       if (e.nativeEvent.text) {

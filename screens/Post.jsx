@@ -131,7 +131,7 @@ const Post = () => {
               </View>
               <View className="ml-4">
                 <Text
-                  className="text-[17px] font-normal max-h-16 h-fit overflow-hidden"
+                  className="text-[17px] font-normal h-fit overflow-hidden"
                   style={{ maxHeight: 100 }}
                 >
                   {itemText}
@@ -208,7 +208,7 @@ const Post = () => {
           <SwipeListView
             useFlatList={true}
             numColumns={1}
-            contentContainerStyle={{ marginTop: 10 }}
+            contentContainerStyle={{ marginTop: 10, position: "relative" }}
             data={postList}
             renderItem={(data, rowMap) => (
               <Listitem

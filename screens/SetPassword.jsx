@@ -26,7 +26,7 @@ const SetPassword = () => {
   const navigation = useNavigation();
 
   const anim = useRef(new Animated.Value(0));
-  setlockactive(false);
+  // setlockactive(false);
   const shake = useCallback(() => {
     // makes the sequence loop
     Animated.loop(

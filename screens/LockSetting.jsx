@@ -28,19 +28,21 @@ const LockSetting = () => {
   const translateValue = 95 - 35 - 12;
   const radioButtonClick = async () => {
     if (!lockactive) {
-      Animated.timing(currentpostion, {
-        toValue: translateValue,
-        useNativeDriver: true,
-        duration: 300,
-      }).start();
+      if (!lockFirstTime) {
+        Animated.timing(currentpostion, {
+          toValue: translateValue,
+          useNativeDriver: true,
+          duration: 300,
+        }).start();
+        await AsyncStorage.setItem(
+          "password",
+          JSON.stringify({ pin: lockPin, isPassword: true })
+        );
+      }
       if (lockFirstTime) {
         navigation.navigate("setPassword");
       }
       console.log("this is called");
-      await AsyncStorage.setItem(
-        "password",
-        JSON.stringify({ pin: lockPin, isPassword: true })
-      );
     } else {
       Animated.timing(currentpostion, {
         toValue: 0,
@@ -52,10 +54,14 @@ const LockSetting = () => {
         JSON.stringify({ pin: lockPin, isPassword: false })
       );
     }
-    setlockactive((pre) => !pre);
+    if (!lockFirstTime) {
+      setlockactive((pre) => !pre);
+    }
   };
+  console.log("this is lockactive --", lockactive, lockFirstTime);
 
   useEffect(() => {
+    console.log("this is lockactive", lockactive, lockFirstTime);
     if (lockactive) {
       Animated.timing(currentpostion, {
         toValue: translateValue,

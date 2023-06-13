@@ -15,11 +15,10 @@ import { Change } from "../components/FontStyle";
 import RenderHtml from "react-native-render-html";
 import * as Clipboard from "expo-clipboard";
 import { htmlToText } from "html-to-text";
-import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import moment from "moment";
 
-const AddStyleText = () => {
+const CopyStyleText = () => {
   const {
     fontSearch,
     setfontSearch,
@@ -33,8 +32,6 @@ const AddStyleText = () => {
   const [fontArray, setfontArray] = useState([]);
   const [fontArrayHistory, setfontArrayHistory] = useState([]);
 
-  const navigation = useNavigation();
-
   useEffect(() => {
     if (fontSearch) {
       const result = Change(fontSearch);
@@ -44,8 +41,8 @@ const AddStyleText = () => {
   }, [fontSearch]);
 
   useEffect(() => {
-    setfontSearch("")
-    setfontSearchvalue("")
+    setfontSearch("");
+    setfontSearchvalue("");
     AsyncStorage.getItem("fontSearchHistory").then((value) => {
       console.log(
         JSON.parse(value).sort((a, b) => (a.Date < b.Date ? 1 : -1)),
@@ -77,8 +74,8 @@ const AddStyleText = () => {
             className="px-3 py-4"
             style={styles.hastagBar}
             onPress={async () => {
-              setfontSearch(itemText)
-              setfontSearchvalue(itemText)
+              setfontSearch(itemText);
+              setfontSearchvalue(itemText);
             }}
           >
             <View className="ml-4">
@@ -132,9 +129,8 @@ const AddStyleText = () => {
                 );
                 // console.log(convert);
                 // setcreatePostInput((pre) => `${pre} ${convert} `);
-                updateScreteInput(convert);
-                navigation.goBack();
-                setfontSearch("");
+                // updateScreteInput(convert);
+                Clipboard.setStringAsync(convert);
                 const history = await AsyncStorage.getItem("fontSearchHistory");
                 if (JSON.parse(history)) {
                   AsyncStorage.setItem(
@@ -144,11 +140,18 @@ const AddStyleText = () => {
                       { search: fontSearch, Date: new Date() },
                     ])
                   );
+                  setfontArrayHistory((pre) => [
+                    { search: fontSearch, Date: new Date() },
+                    ...pre,
+                  ]);
                 } else {
                   AsyncStorage.setItem(
                     "fontSearchHistory",
                     JSON.stringify([{ search: fontSearch, Date: new Date() }])
                   );
+                  setfontArrayHistory([
+                    { search: fontSearch, Date: new Date() },
+                  ]);
                 }
                 // Clipboard.setStringAsync(`${convert}`);
               }}
@@ -156,7 +159,7 @@ const AddStyleText = () => {
               <RenderHtml
                 contentWidth={width}
                 source={{
-                  html: `<div style='width:${width}' onclick>${item}</div>`,
+                  html: `<div style='width:${width};font-size: 16px' onclick>${item}</div>`,
                 }}
               />
             </TouchableOpacity>
@@ -166,6 +169,7 @@ const AddStyleText = () => {
             <Listitem itemText={_.search} key={idx.toString()} time={_.Date} />
           ))
         : null}
+      <View style={{ height: 100 }}></View>
     </ScrollView>
   );
 };
@@ -187,4 +191,4 @@ const styles = StyleSheet?.create({
   },
 });
 
-export default AddStyleText;
+export default CopyStyleText;

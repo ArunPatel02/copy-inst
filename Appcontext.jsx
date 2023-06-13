@@ -3,7 +3,7 @@ import React, { createContext, useEffect, useRef, useState } from "react";
 import { AppState } from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
-import AuthSession from "expo-auth-session";
+import * as AuthSession from "expo-auth-session";
 import GDrive from "expo-google-drive-api-wrapper";
 
 export const CustomContext = createContext();
@@ -24,6 +24,7 @@ const Appcontext = ({ children, setAppIsReady }) => {
     callback: null,
   });
   const [fontSearch, setfontSearch] = useState("");
+  const [fontSearchvalue, setfontSearchvalue] = useState("");
   const [isUpdating, setisUpdating] = useState({ state: false, index: null });
   const [cursor, setcursor] = useState({ start: 0, end: 0 });
   const ref = useRef();
@@ -144,26 +145,31 @@ const Appcontext = ({ children, setAppIsReady }) => {
     }
   };
 
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    webClientId:
-      "468150064386-flrvupg5jusj8qf3oedoljo9r0fotb74.apps.googleusercontent.com",
-    expoClientId:
-      "468150064386-flrvupg5jusj8qf3oedoljo9r0fotb74.apps.googleusercontent.com",
-    androidClientId:
-      "468150064386-4hq112vv05mcqjh7gvkt4oikvq8krpfv.apps.googleusercontent.com",
-    iosClientId:
-      "468150064386-4hq112vv05mcqjh7gvkt4oikvq8krpfv.apps.googleusercontent.com",
-    scopes: ["https://www.googleapis.com/auth/drive"],
-    // responseType: "code",
-    // shouldAutoExchangeCode: false,
-    extraParams: {
-      // access_type: "offline",
-      expires_in: 3600 * 24 * 30 * 12,
+  const [request, response, promptAsync] = Google.useAuthRequest(
+    {
+      // webClientId: "468150064386-flrvupg5jusj8qf3oedoljo9r0fotb74.apps.googleusercontent.com",
+      expoClientId:
+        "468150064386-flrvupg5jusj8qf3oedoljo9r0fotb74.apps.googleusercontent.com",
+      androidClientId:
+        "468150064386-4hq112vv05mcqjh7gvkt4oikvq8krpfv.apps.googleusercontent.com",
+      clientSecret: "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",
+      iosClientId:
+        "468150064386-4hq112vv05mcqjh7gvkt4oikvq8krpfv.apps.googleusercontent.com",
+      scopes: ["https://www.googleapis.com/auth/drive"],
+      responseType: "code",
+      prompt: "consent",
+      extraParams: {
+        access_type: "offline",
+      },
     },
-    // prompt : "consent"
-  });
+    {
+      authorizationEndpoint: "https://accounts.google.com/o/oauth2/v2/auth",
+      tokenEndpoint: "https://oauth2.googleapis.com/token",
+    }
+  );
 
   const [token, setToken] = useState("");
+  const [refreshtokendata, setrefreshTokendata] = useState("");
   const [userInfo, setUserInfo] = useState({});
   const [storage, setstorage] = useState({});
   const [loading, setloading] = useState(false);
@@ -171,6 +177,7 @@ const Appcontext = ({ children, setAppIsReady }) => {
   const [isLoginOut, setisLoginOut] = useState(false);
   const [clickedBackupId, setclickedBackupId] = useState("");
   const [loaderVisible, setloaderVisible] = useState(false);
+  const [isRefreshdone, setisRefreshdone] = useState(false);
 
   const getFileDetails = async (id, savedToken) => {
     try {
@@ -188,6 +195,35 @@ const Appcontext = ({ children, setAppIsReady }) => {
       // console.log(error, "error while fetching the file");
     }
   };
+
+  // if(AuthSession.TokenResponse.isTokenFresh)
+  console.log("--is token fresh--", AuthSession?.TokenResponse.isTokenFresh());
+
+  const refreshToken = async () => {
+    const tokenResult = await AuthSession.refreshAsync(
+      {
+        clientId:
+          "468150064386-flrvupg5jusj8qf3oedoljo9r0fotb74.apps.googleusercontent.com",
+        // refreshToken: refreshtokendata,
+        refreshToken:
+          "1//0g44EqPVDkhj7CgYIARAAGBASNwF-L9IrgwuVtCFo1kPotvrZAJ2bAQcBxm6lgv_f38eSnJKl4ZrvVFCnG9AgyrCbYggnxr9JEA8",
+        clientSecret: "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",
+      },
+      {
+        authorizationEndpoint: "https://accounts.google.com/o/oauth2/v2/auth",
+        tokenEndpoint: "https://oauth2.googleapis.com/token",
+      }
+    );
+    console.log("this is refresh token result", tokenResult);
+    setToken(tokenResult.accessToken);
+  };
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     console.log("calling refresh token ");
+
+  //   }, 10000);
+  // }, []);
 
   const getFileList = async (folder, savedToken) => {
     // https://www.googleapis.com/drive/v3/files?q=%27arun%27&fields=*
@@ -226,17 +262,28 @@ const Appcontext = ({ children, setAppIsReady }) => {
       } else {
         setloading(false);
       }
+      AsyncStorage.getItem("refreshToken").then((refreshTokenSaved) => {
+        setrefreshTokendata(refreshTokenSaved);
+      });
     });
   }, []);
 
   useEffect(() => {
     console.log("started seting the data", response);
+    // return;
     if (isLoginOut) return;
     if (response?.type === "success") {
       console.log("token", response.authentication.accessToken);
       setToken(response.authentication.accessToken);
+      setrefreshTokendata(response.authentication.refreshToken);
       gdInit(response.authentication.accessToken);
       getUserInfo(response.authentication.accessToken);
+      AsyncStorage.setItem(
+        "refreshToken",
+        JSON.stringify(response.authentication.refreshToken)
+      ).then(() => {
+        // console.log("token saved");
+      });
       AsyncStorage.setItem(
         "token",
         JSON.stringify(response.authentication.accessToken)
@@ -286,7 +333,14 @@ const Appcontext = ({ children, setAppIsReady }) => {
       setloading(false);
     } catch (error) {
       // console.log(error, "this is error");
-      setloading(false);
+      if (isRefreshdone) {
+        setloading(false);
+      } else {
+        refreshToken().then((res) => {
+          console.log("done");
+          setisRefreshdone(true);
+        });
+      }
       // Add your own error handler here
     }
   };
@@ -359,6 +413,8 @@ const Appcontext = ({ children, setAppIsReady }) => {
         inputRef,
         loaderVisible,
         setloaderVisible,
+        fontSearchvalue,
+        setfontSearchvalue,
       }}
     >
       {children}

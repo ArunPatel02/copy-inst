@@ -273,6 +273,7 @@ const BackUp = () => {
                   if (token) {
                     try {
                       await AsyncStorage.removeItem("token");
+                      await AsyncStorage.removeItem("refreshToken");
                       // setisLoginOut(false);
                     } catch (error) {
                       // console.log("ERROR XXX", error);
