@@ -17,6 +17,8 @@ import * as Clipboard from "expo-clipboard";
 import { htmlToText } from "html-to-text";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import moment from "moment";
+import { MaterialIcons } from "@expo/vector-icons";
+import { TouchableWithoutFeedback } from "react-native";
 
 const CopyStyleText = () => {
   const {
@@ -64,7 +66,7 @@ const CopyStyleText = () => {
     }
   }, [inputRef.current]);
 
-  const Listitem = ({ itemText, time }) => {
+  const Listitem = ({ itemText, time, index }) => {
     return (
       <>
         {itemText !== "" ? (
@@ -78,11 +80,26 @@ const CopyStyleText = () => {
               setfontSearchvalue(itemText);
             }}
           >
-            <View className="ml-4">
+            <View className="ml-4" style={{ flexDirection: "column" }}>
               <Text className="text-[17px] font-normal">{itemText}</Text>
               <Text className="text-[14px] text-gray-400">
                 {moment.utc(time).local().startOf("seconds").fromNow()}
               </Text>
+            </View>
+            <View>
+              <TouchableWithoutFeedback
+                onPress={async () => {
+                  let copyArray = [...fontArrayHistory];
+                  copyArray.splice(index, 1);
+                  setfontArrayHistory(copyArray);
+                  await AsyncStorage.setItem(
+                    "fontSearchHistory",
+                    JSON.stringify(copyArray)
+                  );
+                }}
+              >
+                <Entypo name="cross" size={32} color="#969595" />
+              </TouchableWithoutFeedback>
             </View>
           </Pressable>
         ) : null}
@@ -117,56 +134,85 @@ const CopyStyleText = () => {
           Recent Searches
         </Text>
       </View>
+      {fontArrayHistory.length && !fontSearch ? (
+        <TouchableOpacity
+          className="w-full px-4 py-2 border-b-[#969595] flex items-center"
+          style={{ borderBottomWidth: 0.3, flexDirection: "row" }}
+          onPress={async () => {
+            setfontArrayHistory([]);
+            await AsyncStorage.removeItem("fontSearchHistory");
+          }}
+        >
+          <MaterialIcons name="delete" size={20} color="#969595" />
+          <Text
+            className="text-base text-[#969595]"
+            style={{ color: "#969595" }}
+          >
+            Clear all
+          </Text>
+        </TouchableOpacity>
+      ) : null}
       {fontArray.length && fontSearch
         ? fontArray.map((item, idx) => (
-            <TouchableOpacity
-              className="w-full h-14 mx-3 border-b-[#969595] flex justify-center"
-              style={{ borderBottomWidth: 0.3 }}
-              key={idx}
-              onPress={async () => {
-                const convert = htmlToText(
-                  `<p style='width:${width};font-size: 30px'>${item}</p>`
-                );
-                // console.log(convert);
-                // setcreatePostInput((pre) => `${pre} ${convert} `);
-                // updateScreteInput(convert);
-                Clipboard.setStringAsync(convert);
-                const history = await AsyncStorage.getItem("fontSearchHistory");
-                if (JSON.parse(history)) {
-                  AsyncStorage.setItem(
-                    "fontSearchHistory",
-                    JSON.stringify([
-                      ...JSON.parse(history),
+            <>
+              <TouchableOpacity
+                className="w-full h-14 mx-3 border-b-[#969595] flex justify-center"
+                style={{ borderBottomWidth: 0.3 }}
+                key={idx}
+                onPress={async () => {
+                  const convert = htmlToText(
+                    `<p style='width:${width};font-size: 30px'>${item}</p>`
+                  );
+                  // console.log(convert);
+                  // setcreatePostInput((pre) => `${pre} ${convert} `);
+                  // updateScreteInput(convert);
+                  Clipboard.setStringAsync(convert);
+                  const history = await AsyncStorage.getItem(
+                    "fontSearchHistory"
+                  );
+                  if (JSON.parse(history)) {
+                    AsyncStorage.setItem(
+                      "fontSearchHistory",
+                      JSON.stringify([
+                        ...JSON.parse(history),
+                        { search: fontSearch, Date: new Date() },
+                      ])
+                    );
+                    setfontArrayHistory((pre) => [
                       { search: fontSearch, Date: new Date() },
-                    ])
-                  );
-                  setfontArrayHistory((pre) => [
-                    { search: fontSearch, Date: new Date() },
-                    ...pre,
-                  ]);
-                } else {
-                  AsyncStorage.setItem(
-                    "fontSearchHistory",
-                    JSON.stringify([{ search: fontSearch, Date: new Date() }])
-                  );
-                  setfontArrayHistory([
-                    { search: fontSearch, Date: new Date() },
-                  ]);
-                }
-                // Clipboard.setStringAsync(`${convert}`);
-              }}
-            >
-              <RenderHtml
-                contentWidth={width}
-                source={{
-                  html: `<div style='width:${width};font-size: 16px' onclick>${item}</div>`,
+                      ...pre,
+                    ]);
+                  } else {
+                    AsyncStorage.setItem(
+                      "fontSearchHistory",
+                      JSON.stringify([{ search: fontSearch, Date: new Date() }])
+                    );
+                    setfontArrayHistory([
+                      { search: fontSearch, Date: new Date() },
+                    ]);
+                  }
+                  // Clipboard.setStringAsync(`${convert}`);
                 }}
-              />
-            </TouchableOpacity>
+              >
+                <RenderHtml
+                  contentWidth={width}
+                  source={{
+                    html: `<div style='width:${width};font-size: 16px' onclick>${item}</div>`,
+                  }}
+                />
+              </TouchableOpacity>
+            </>
           ))
         : fontArrayHistory.length
         ? fontArrayHistory.map((_, idx) => (
-            <Listitem itemText={_.search} key={idx.toString()} time={_.Date} />
+            <>
+              <Listitem
+                itemText={_.search}
+                key={idx.toString()}
+                time={_.Date}
+                index={idx}
+              />
+            </>
           ))
         : null}
       <View style={{ height: 100 }}></View>
@@ -178,6 +224,9 @@ const styles = StyleSheet?.create({
   hastagBar: {
     borderBottomColor: "#d1cfcf",
     borderBottomWidth: 0.5,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   boxShadow: {
     shadowColor: "#393ec4",
