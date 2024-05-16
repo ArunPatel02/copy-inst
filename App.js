@@ -51,9 +51,9 @@ export default function App() {
   }
   return (
     <Appcontext setAppIsReady={setAppIsReady}>
-      <StatusBar style="auto" />
       {/* <Alert /> */}
       <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+        <StatusBar style="auto" />
         {!isTutorialDone ? <Slider setisTutorialDone={setisTutorialDone} isTutorialDone={isTutorialDone} /> :
           <Navigation />}
       </View>

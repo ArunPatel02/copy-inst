@@ -58,7 +58,7 @@ text: {
     paddingHorizontal: 20,
     color: "white",
     fontSize: 16,
-    fontWeight: 400,
+    fontWeight: "400",
   },
 });
 

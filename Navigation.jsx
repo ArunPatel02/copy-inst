@@ -41,6 +41,7 @@ import { debounce } from "lodash";
 import { ActivityIndicator } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import CopyStyleText from "./screens/CopyStyleText";
+import React from "react";
 // import BackUpDummy from "./screens/dummy";
 
 const Stack = createNativeStackNavigator();
@@ -164,9 +165,10 @@ const MyTabBar = ({ state, descriptors, navigation, ...rest }) => {
               });
             };
 
-            const TabStyleView = ({ children }) => {
+            const TabStyleView = ({ children, key }) => {
               return (
                 <TouchableOpacity
+                  key={key}
                   accessibilityRole="button"
                   accessibilityState={isFocused ? { selected: true } : {}}
                   accessibilityLabel={options.tabBarAccessibilityLabel}
@@ -189,12 +191,9 @@ const MyTabBar = ({ state, descriptors, navigation, ...rest }) => {
             };
 
             return (
-              <>
-                {/* <Text style={{ color: isFocused ? '#673ab7' : '#222' }}>
-              {label}
-            </Text> */}
+              <React.Fragment key={index}>
                 {index === 0 ? (
-                  <TabStyleView kay={index}>
+                  <TabStyleView key={index}>
                     <Feather
                       name="menu"
                       size={isFocusedSelected ? 36 : 28}
@@ -202,7 +201,7 @@ const MyTabBar = ({ state, descriptors, navigation, ...rest }) => {
                     />
                   </TabStyleView>
                 ) : index === 1 ? (
-                  <TabStyleView kay={index}>
+                  <TabStyleView key={index}>
                     <Fontisto
                       name="hashtag"
                       size={isFocusedSelected ? 28 : 24}
@@ -210,7 +209,7 @@ const MyTabBar = ({ state, descriptors, navigation, ...rest }) => {
                     />
                   </TabStyleView>
                 ) : index === 2 ? (
-                  <TabStyleView kay={index}>
+                  <TabStyleView key={index}>
                     <FontAwesome
                       name="font"
                       size={isFocusedSelected ? 28 : 24}
@@ -218,7 +217,7 @@ const MyTabBar = ({ state, descriptors, navigation, ...rest }) => {
                     />
                   </TabStyleView>
                 ) : (
-                  <TabStyleView kay={index}>
+                  <TabStyleView key={index}>
                     <MaterialIcons
                       name="person-outline"
                       size={isFocusedSelected ? 38 : 32}
@@ -226,7 +225,7 @@ const MyTabBar = ({ state, descriptors, navigation, ...rest }) => {
                     />
                   </TabStyleView>
                 )}
-              </>
+              </React.Fragment>
             );
           })}
         </View>

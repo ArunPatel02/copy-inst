@@ -14,14 +14,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "468150064386-4hq112vv05mcqjh7gvkt4oikvq8krpfv.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.arunpatel.copyinst",
-            "certificate_hash": "bc4ef0b03d10db6f2eaf9dce4667436a7a8d4419"
-          }
-        },
-        {
           "client_id": "468150064386-flrvupg5jusj8qf3oedoljo9r0fotb74.apps.googleusercontent.com",
           "client_type": 3
         }

@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Entypo } from "@expo/vector-icons";
-import { styled } from "nativewind";
+// import { styled } from "nativewind";
 import { CustomContext } from "../Appcontext";
 import { Change } from "../components/FontStyle";
 import RenderHtml from "react-native-render-html";

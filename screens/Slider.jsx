@@ -13,13 +13,15 @@ import SlideItem from "./SlideItem";
 import Pagination from "./Pagination";
 import Carousel from "react-native-reanimated-carousel";
 import { gestureHandlerRootHOC } from "react-native-gesture-handler";
+import postImage from "../assets/app_guide/posts.png"
 
 const { width, height } = Dimensions.get("window");
 
 const Slides = [
   {
     id: 1,
-    img: require("../assets/app_guide/posts.png"),
+    // img: require("../assets/app_guide/posts.png"),
+    img: postImage,
     component: () => (
       <Text
         style={{
